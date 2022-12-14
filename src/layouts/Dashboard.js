@@ -83,7 +83,7 @@ const Dashboard = ({ children }) => {
       </Drawer>
       <AppContent>
         <Navbar onDrawerToggle={handleDrawerToggle} />
-        <MainContent p={isLgUp ? 12 : 5}>
+        <MainContent p={isLgUp ? 7 : 5}>
           {children}
           <Outlet />
         </MainContent>

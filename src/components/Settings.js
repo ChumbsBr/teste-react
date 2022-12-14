@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import Link from "next/link";
 
-import { green, grey, indigo } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { Palette as PaletteIcon } from "@mui/icons-material";
 import {
   Alert,
@@ -49,31 +49,6 @@ const DemoButtonInner = styled.div`
     css`
       background: linear-gradient(-45deg, #23303f 50%, ${grey[100]} 0);
     `}
-  ${(props) =>
-    props.selectedTheme === THEMES.DARK &&
-    css`
-      background: #23303f;
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.LIGHT &&
-    css`
-      background: ${grey[100]};
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.BLUE &&
-    css`
-      background: linear-gradient(-45deg, #4782da 50%, ${grey[100]} 0);
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.GREEN &&
-    css`
-      background: linear-gradient(-45deg, ${green[500]} 50%, ${grey[100]} 0);
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.INDIGO &&
-    css`
-      background: linear-gradient(-45deg, ${indigo[500]} 50%, ${grey[100]} 0);
-    `}
 `;
 
 const DemoTitle = styled(Typography)`
@@ -88,7 +63,7 @@ const Fab = styled(MuiFab)`
 `;
 
 const Wrapper = styled.div`
-  width: 258px;
+  width: 400px;
   overflow-x: hidden;
 `;
 
@@ -135,12 +110,10 @@ function Demos() {
 
       <Box px={4} my={3}>
         <Grid container spacing={3}>
-          <Demo title="Dark" themeVariant={THEMES.DARK} />
-          <Demo title="Light" themeVariant={THEMES.LIGHT} />
-          <Demo title="Default" themeVariant={THEMES.DEFAULT} />
-          <Demo title="Blue" themeVariant={THEMES.BLUE} />
-          <Demo title="Green" themeVariant={THEMES.GREEN} />
-          <Demo title="Indigo" themeVariant={THEMES.INDIGO} />
+          <form>
+            
+          </form>
+          {/* <Demo title="Default" themeVariant={THEMES.DEFAULT} /> */}
         </Grid>
       </Box>
 

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
-
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
 
 import {
+  Alert,
   Box,
   Breadcrumbs as MuiBreadcrumbs,
   Button,
@@ -29,7 +29,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { green, orange, red } from "@mui/material/colors";
+
 import {
   Add as AddIcon,
   FilterList as FilterListIcon,
@@ -39,6 +39,7 @@ import { spacing } from "@mui/system";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+// import { Settings } from "react-feather";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -51,31 +52,6 @@ const Spacer = styled.div`
 const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
-
-function createData(id, description) {
-  return { id, description };
-}
-
-const tableData = [
-  createData("1", "MDFe",),
-  createData("2", "CRM",),
-  createData("3", "ERP",),
-  createData("4", "Gerencial",),
-  createData("5", "Inventário Consignado",),
-  createData("6", "Controle de Entregas"),
-  createData("7", "Força de Vendas"),
-];
-
-// const [tableData, setTableData] = useState([])
-
-// useEffect(()=>{
-//   fetch("URL_DA_API")
-//   .then(res=>res.json())
-//   .then((data=>{
-//     setTableData(data)
-//   }))
-//   .catch((err) => console.log(err))
-// }, [])
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -108,7 +84,7 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: "id", alignment: "left", label: "ID" },
-  { id: "description", alignment: "left", label: "Descrição" },
+  { id: "descricao", alignment: "left", label: "Descrição" },
   {},
 ];
 
@@ -195,6 +171,18 @@ const EnhancedTableToolbar = (props) => {
 };
 
 function EnhancedTable() {
+
+  const [tableData, setTableData] = useState([])
+  useEffect(()=>{
+    fetch("https://localhost:7228/produtos")
+    .then(res=>res.json())
+    .then((data=>{
+      console.log(data)
+      setTableData(data)
+    }))
+    .catch((err) => console.log(err))
+  }, [])
+
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
   const [selected, setSelected] = React.useState([]);
@@ -249,6 +237,32 @@ function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
+  
+  function UpdateProduct(productId){
+    let url = `https://localhost:7228/produtos/${productId}`
+    // console.log(productDescription)
+
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({
+        descricao: "Produto Alterado",
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response)
+    // .then((data) => console.log(data));
+    return(alert("ATUALIZADO"))
+  }
+
+  function DeleteProduct(productId){
+    let url = `https://localhost:7228/produtos/${productId}`
+    fetch(url, {
+      method: 'DELETE',
+    })
+    alert(`Produto ${productId} deletado com sucesso!`)
+  }
 
   return (
     <div>
@@ -293,10 +307,11 @@ function EnhancedTable() {
                       </TableCell>
 
                       <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="left">{row.description}</TableCell>
+                      <TableCell align="left">{row.descricao}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          <IconButton aria-label="edit" size="large">
+                          {/* passar ID do produto */}
+                          <IconButton aria-label="edit" size="large" onClick={() => UpdateProduct(row.id)}>
                             <EditIcon />
                           </IconButton>
 
@@ -307,7 +322,8 @@ function EnhancedTable() {
                             </IconButton>
                           </NextLink>
 
-                          <IconButton aria-label="delete" size="large">
+                          {/* passar ID do produto */}
+                          <IconButton aria-label="delete" size="large" onClick={() => DeleteProduct(row.id)}>
                             <DeleteIcon />
                           </IconButton>
 
@@ -338,7 +354,23 @@ function EnhancedTable() {
   );
 }
 
+const fakeData = {Descricao: "Produto adicionado"}
+
 function OrderList() {
+
+  function CreateProduct(){
+    fetch("https://localhost:7228/produtos", {
+      method: 'POST',
+      body: JSON.stringify(fakeData),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
+
+  }
+  
   return (
     <React.Fragment>
       <Helmet title="Produtos" />
@@ -352,7 +384,7 @@ function OrderList() {
         </Grid>
         <Grid item>
           <div>
-            <Button variant="contained" color="primary">
+            <Button onClick={CreateProduct} variant="contained" color="primary" >
               <AddIcon />
               Criar Produto
             </Button>
@@ -364,9 +396,10 @@ function OrderList() {
 
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <EnhancedTable />
+          <EnhancedTable /> 
         </Grid>
       </Grid>
+     <Settings/>
     </React.Fragment>
   );
 }
