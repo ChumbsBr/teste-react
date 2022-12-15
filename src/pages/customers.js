@@ -4,8 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
-// import CreateData from "../../src/pages/";
-import { CreateData } from "../../src/pages/products";
+import { CreateData, DeleteData, UpdateData } from "../../src/functions/crud";
 
 import {
   Alert,
@@ -42,6 +41,10 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 // import { Settings } from "react-feather";
+
+const fakeData = {NomeFantasia: "Cliente adicionado", Cnpj: "79990880000140"}
+const url = "https://localhost:7228/clientes"
+const newData = {NomeFantasia: "Cliente Alterado", Cnpj: "15440770000141"}
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -240,32 +243,6 @@ function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
-  
-  function UpdateCustomer(customerId){
-    let url = `https://localhost:7228/clientes/${customerId}`
-
-    fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify({
-        nomeFantasia: "Cliente Alterado",
-        cnpj: "15440770000141",
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response)
-    // .then((data) => console.log(data));
-    return(alert("ATUALIZADO"))
-  }
-
-  function DeleteCustomer(customerId){
-    let url = `https://localhost:7228/clientes/${customerId}`
-    fetch(url, {
-      method: 'DELETE',
-    })
-    alert(`CLiente ${customerId} deletado com sucesso!`)
-  }
 
   return (
     <div>
@@ -315,7 +292,7 @@ function EnhancedTable() {
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           {/* passar ID do cliente */}
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateCustomer(row.id)}>
+                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData) }>
                             <EditIcon />
                           </IconButton>
 
@@ -327,7 +304,7 @@ function EnhancedTable() {
                           </NextLink>
 
                           {/* passar ID do cliente */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteCustomer(row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={() => DeleteData(url, row.id)}>
                             <DeleteIcon />
                           </IconButton>
 
@@ -357,22 +334,6 @@ function EnhancedTable() {
     </div>
   );
 }
-
-const fakeData = {NomeFantasia: "Cliente adicionado", Cnpj: "79990880000140"}
-const url = "https://localhost:7228/clientes"
-
-// function CreateCustomer(){
-//   fetch("https://localhost:7228/clientes", {
-//     method: 'POST',
-//     body: JSON.stringify(fakeData),
-//     headers: {
-//       'Content-type': 'application/json; charset=UTF-8',
-//     },
-//   })
-//   .then((response) => response.json())
-//   .then((json) => console.log(json));
-
-// }
 
 function CustomerList() {
   

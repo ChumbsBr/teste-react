@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
+import { CreateData, DeleteData, UpdateData } from "../../src/functions/crud";
 
 import {
   Alert,
@@ -40,6 +41,10 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 // import { Settings } from "react-feather";
+
+const fakeData = {Descricao: "Produto adicionado"}
+const url = "https://localhost:7228/produtos"
+const newData = {Descricao: "Produto atualizado"}
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -237,32 +242,6 @@ function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
-  
-  function UpdateProduct(productId){
-    let url = `https://localhost:7228/produtos/${productId}`
-    // console.log(productDescription)
-
-    fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify({
-        descricao: "Produto Alterado",
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response)
-    // .then((data) => console.log(data));
-    return(alert("ATUALIZADO"))
-  }
-
-  function DeleteProduct(productId){
-    let url = `https://localhost:7228/produtos/${productId}`
-    fetch(url, {
-      method: 'DELETE',
-    })
-    alert(`Produto ${productId} deletado com sucesso!`)
-  }
 
   return (
     <div>
@@ -311,7 +290,7 @@ function EnhancedTable() {
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           {/* passar ID do produto */}
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateProduct(row.id)}>
+                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
                             <EditIcon />
                           </IconButton>
 
@@ -323,7 +302,7 @@ function EnhancedTable() {
                           </NextLink>
 
                           {/* passar ID do produto */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteProduct(row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={() => DeleteData(url, row.id)}>
                             <DeleteIcon />
                           </IconButton>
 
@@ -352,23 +331,6 @@ function EnhancedTable() {
       </Paper>
     </div>
   );
-}
-
-const fakeData = {Descricao: "Produto adicionado"}
-const url = "https://localhost:7228/produtos"
-
-export const CreateData = (url, data) =>{
-  console.log(url, data)
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-    },
-  })
-  .then((response) => response.json())
-  .then((json) => console.log(json));
-
 }
 
 function ProductList() {
