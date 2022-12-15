@@ -355,27 +355,29 @@ function EnhancedTable() {
 }
 
 const fakeData = {Descricao: "Produto adicionado"}
+const url = "https://localhost:7228/produtos"
 
-function OrderList() {
+export const CreateData = (url, data) =>{
+  console.log(url, data)
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+  .then((response) => response.json())
+  .then((json) => console.log(json));
 
-  function CreateProduct(){
-    fetch("https://localhost:7228/produtos", {
-      method: 'POST',
-      body: JSON.stringify(fakeData),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response.json())
-    .then((json) => console.log(json));
+}
 
-  }
+function ProductList() {
   
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Produtos" />
-
-      <Grid justifyContent="space-between" container spacing={10}>
+      <>
+        <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Produtos
@@ -384,28 +386,28 @@ function OrderList() {
         </Grid>
         <Grid item>
           <div>
-            <Button onClick={CreateProduct} variant="contained" color="primary" >
+            <Button onClick={() => CreateData(url, fakeData)} variant="contained" color="primary" >
               <AddIcon />
               Criar Produto
             </Button>
           </div>
         </Grid>
-      </Grid>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <EnhancedTable /> 
         </Grid>
-      </Grid>
-     <Settings/>
-    </React.Fragment>
+
+        <Divider my={6} />
+
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <EnhancedTable/> 
+          </Grid>
+        </Grid>
+      </>
+    </>
   );
 }
 
-OrderList.getLayout = function getLayout(page) {
+ProductList.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default OrderList;
+export default ProductList;
