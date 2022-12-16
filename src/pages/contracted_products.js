@@ -145,9 +145,9 @@ const EnhancedTableToolbar = (props) => {
             {numSelected} selected
           </Typography>
         ) : (
-          <Typography variant="h6" id="tableTitle">
+          <pre><Typography variant="h6" id="tableTitle">
             Lista de Produtos Contratados
-          </Typography>
+          </Typography></pre>
         )}
       </ToolbarTitle>
       <Spacer />
@@ -240,7 +240,6 @@ function EnhancedTable() {
   
   function UpdateContractedProduct(contractedProductId){
     let url = `https://localhost:7228/produtos/${contractedProductId}`
-    // console.log(productDescription)
 
     fetch(url, {
       method: 'PUT',

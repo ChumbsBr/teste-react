@@ -25,7 +25,7 @@ import DashboardLayout from "../../layouts/Dashboard";
 
 const Divider = styled(MuiDivider)(spacing);
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
+// const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Card = styled(MuiCard)(spacing);
 
@@ -38,11 +38,11 @@ const Button = styled(MuiButton)(spacing);
 const timeOut = (time) => new Promise((res) => setTimeout(res, time));
 
 const initialValues = {
-  firstName: "Lucy",
-  lastName: "Lavender",
-  email: "lucylavender@gmail.com",
-  password: "mypassword123",
-  confirmPassword: "mypassword123",
+  // firstName: "Lucy",
+  // lastName: "Lavender",
+  // email: "lucylavender@gmail.com",
+  // password: "mypassword123",
+  // confirmPassword: "mypassword123",
 };
 
 const validationSchema = Yup.object().shape({
@@ -211,22 +211,12 @@ function BasicForm() {
 function FormikPage() {
   return (
     <React.Fragment>
-      <Helmet title="Formik" />
+      {/* <Helmet title="Formik" />
       <Typography variant="h3" gutterBottom display="inline">
         Formik
-      </Typography>
-
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <NextLink href="/" passHref>
-          <Link>Dashboard</Link>
-        </NextLink>
-        <NextLink href="/" passHref>
-          <Link>Forms</Link>
-        </NextLink>
-        <Typography>Formik</Typography>
-      </Breadcrumbs>
-
-      <Divider my={6} />
+      </Typography> */}
+      
+      {/* <Divider my={6} /> */}
 
       <BasicForm />
     </React.Fragment>

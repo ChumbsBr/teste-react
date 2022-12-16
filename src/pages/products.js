@@ -4,7 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
-import { CreateData, DeleteData, UpdateData } from "../../src/functions/crud";
+import { DeleteData, UpdateData } from "../../src/functions/crud";
 
 import {
   Alert,
@@ -45,6 +45,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const fakeData = {Descricao: "Produto adicionado"}
 const url = "https://localhost:7228/produtos"
 const newData = {Descricao: "Produto atualizado"}
+
+const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -243,6 +245,19 @@ function EnhancedTable() {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
 
+  const [open, setOpen] = React.useState(false);
+
+  const [idProduct, setIdProduct] = React.useState();
+
+  function handleClickOpen(teste){
+    setOpen(true);
+    setIdProduct(teste);
+  };
+
+  function handleClose(){
+    return setOpen(false);
+  };
+
   return (
     <div>
       <Paper>
@@ -302,9 +317,33 @@ function EnhancedTable() {
                           </NextLink>
 
                           {/* passar ID do produto */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteData(url, row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
                             <DeleteIcon />
                           </IconButton>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Deletar produto ${idProduct}`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Você tem certeza que deseja deletar este produto?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose} color="primary">
+                                Não
+                              </Button>
+                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct)}}color="primary" autoFocus>
+                                Sim
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
 
                         </Box>
                       </TableCell>
@@ -345,14 +384,24 @@ function ProductList() {
             Produtos
           </Typography>
 
+          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+            <NextLink href="/" passHref>
+              <Link>Nome 1</Link>
+            </NextLink>
+            <NextLink href="/" passHref>
+              <Link>Nome 2</Link>
+            </NextLink>
+            <Typography>Lista de Produtos</Typography>
+          </Breadcrumbs>
+
         </Grid>
         <Grid item>
-          <div>
-            <Button onClick={() => CreateData(url, fakeData)} variant="contained" color="primary" >
-              <AddIcon />
-              Criar Produto
-            </Button>
-          </div>
+          <NextLink href="/forms/productForm" passHref>
+              <Link><Button variant="contained" color="primary" >
+                <AddIcon />
+                Criar Produto
+              </Button></Link>
+          </NextLink>
         </Grid>
         </Grid>
 

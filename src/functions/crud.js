@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
 
 export const CreateData = (url, data) =>{
-  console.log(url, data)
   fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -11,7 +9,6 @@ export const CreateData = (url, data) =>{
   })
   .then((response) => response.json())
   .then((json) => console.log(json));
-
 }
 
 export const DeleteData = (url, dataId) =>{
@@ -19,7 +16,7 @@ export const DeleteData = (url, dataId) =>{
     fetch(url, {
       method: 'DELETE',
     })
-    alert(`Dado de ID ${dataId} deletado com sucesso!`)
+    // alert(`Dado de ID ${dataId} deletado com sucesso!`)
 }
 
 export const UpdateData = (url, dataId, data) => {
@@ -34,10 +31,10 @@ export const UpdateData = (url, dataId, data) => {
       },
     })
     .then((response) => response)
-    return(alert("ATUALIZADO"))
+    // return(alert("ATUALIZADO"))
 }
 
 function teste(){
     console.log("teste");
+    return(alert("TESTE"))
 };
-export default teste;
