@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
+import { DeleteData, UpdateData } from "../../src/functions/crud";
 
 import {
   Alert,
@@ -12,6 +13,11 @@ import {
   Button,
   Checkbox,
   Chip as MuiChip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider as MuiDivider,
   Grid,
   IconButton,
@@ -40,6 +46,12 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 // import { Settings } from "react-feather";
+
+const fakeData = {Descricao: "Produto adicionado"}
+const url = "https://localhost:7228/produtos"
+const newData = {Descricao: "Produto atualizado"}
+
+const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -237,32 +249,19 @@ function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
-  
-  function UpdateProduct(productId){
-    let url = `https://localhost:7228/produtos/${productId}`
-    // console.log(productDescription)
 
-    fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify({
-        descricao: "Produto Alterado",
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response)
-    // .then((data) => console.log(data));
-    return(alert("ATUALIZADO"))
-  }
+  const [open, setOpen] = React.useState(false);
 
-  function DeleteProduct(productId){
-    let url = `https://localhost:7228/produtos/${productId}`
-    fetch(url, {
-      method: 'DELETE',
-    })
-    alert(`Produto ${productId} deletado com sucesso!`)
-  }
+  const [idProduct, setIdProduct] = React.useState();
+
+  function handleClickOpen(teste){
+    setOpen(true);
+    setIdProduct(teste);
+  };
+
+  function handleClose(){
+    return setOpen(false);
+  };
 
   return (
     <div>
@@ -311,7 +310,7 @@ function EnhancedTable() {
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           {/* passar ID do produto */}
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateProduct(row.id)}>
+                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
                             <EditIcon />
                           </IconButton>
 
@@ -323,9 +322,33 @@ function EnhancedTable() {
                           </NextLink>
 
                           {/* passar ID do produto */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteProduct(row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
                             <DeleteIcon />
                           </IconButton>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Deletar produto ${idProduct}`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Você tem certeza que deseja deletar este produto?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose} color="primary">
+                                Não
+                              </Button>
+                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct)}}color="primary" autoFocus>
+                                Sim
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
 
                         </Box>
                       </TableCell>
@@ -354,58 +377,53 @@ function EnhancedTable() {
   );
 }
 
-const fakeData = {Descricao: "Produto adicionado"}
-
-function OrderList() {
-
-  function CreateProduct(){
-    fetch("https://localhost:7228/produtos", {
-      method: 'POST',
-      body: JSON.stringify(fakeData),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response.json())
-    .then((json) => console.log(json));
-
-  }
+function ProductList() {
   
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Produtos" />
-
-      <Grid justifyContent="space-between" container spacing={10}>
+      <>
+        <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Produtos
           </Typography>
 
+          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+            <NextLink href="/" passHref>
+              <Link>Nome 1</Link>
+            </NextLink>
+            <NextLink href="/" passHref>
+              <Link>Nome 2</Link>
+            </NextLink>
+            <Typography>Lista de Produtos</Typography>
+          </Breadcrumbs>
+
         </Grid>
         <Grid item>
-          <div>
-            <Button onClick={CreateProduct} variant="contained" color="primary" >
-              <AddIcon />
-              Criar Produto
-            </Button>
-          </div>
+          <NextLink href="/forms/productForm" passHref>
+              <Link><Button variant="contained" color="primary" >
+                <AddIcon />
+                Criar Produto
+              </Button></Link>
+          </NextLink>
         </Grid>
-      </Grid>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <EnhancedTable /> 
         </Grid>
-      </Grid>
-     <Settings/>
-    </React.Fragment>
+
+        <Divider my={6} />
+
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <EnhancedTable/> 
+          </Grid>
+        </Grid>
+      </>
+    </>
   );
 }
 
-OrderList.getLayout = function getLayout(page) {
+ProductList.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default OrderList;
+export default ProductList;

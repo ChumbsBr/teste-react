@@ -101,7 +101,7 @@ function Demos() {
     <Wrapper>
       <Heading>Select a demo</Heading>
 
-      <Box px={4} my={3}>
+      <Box px={4} my={0}>
         <Alert icon={false} severity="info">
           <strong>Hello!</strong> Select your style below. Choose the ones that
           best fits your needs.
@@ -110,10 +110,7 @@ function Demos() {
 
       <Box px={4} my={3}>
         <Grid container spacing={3}>
-          <form>
-            
-          </form>
-          {/* <Demo title="Default" themeVariant={THEMES.DEFAULT} /> */}
+          {/* formilario aqui! */}
         </Grid>
       </Box>
 
