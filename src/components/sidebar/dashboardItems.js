@@ -9,50 +9,27 @@ import {
 
 const pagesCatalog = [
   {
-    href: "/customers",
+    href: "/clientes",
     icon: UserCheck,
     title: "Clientes",
   },
   {
-    href: "/contracted_products",
+    href: "/produtoscontratados",
     icon: ShoppingBag,
     title: "Produtos Contratados",
   },
   {
-    href: "/audit",
+    href: "/auditoria",
     icon: Activity,
     title: "Auditorias",
-    // badge: "8",
-    // children: [
-    //     {
-    //       href: "/pages/profile",
-    //       title: "Profile",
-    //     },
-    //     {
-    //       href: "/pages/settings",
-    //       title: "Settings",
-    //     },
-    //     {
-    //       href: "/pages/pricing",
-    //       title: "Pricing",
-    //     },
-    //     {
-    //       href: "/pages/chat",
-    //       title: "Chat",
-    //     },
-    //     {
-    //       href: "/pages/blank",
-    //       title: "Blank Page",
-    //     },
-    //   ],
   },
   {
-    href: "/products",
+    href: "/produtos",
     icon: ShoppingCart,
     title: "Produtos",
   },
   {
-    href: "/users",
+    href: "/usuarios",
     icon: Users,
     title: "Usuários",
   },

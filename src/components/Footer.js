@@ -47,7 +47,7 @@ function Footer() {
         >
           <List>
             <ListItemButton component="a" href="#">
-              <ListItemText primary="Copyright © 2022 Mira - Todos os direitos reservados." />
+              <ListItemText primary={`Copyright © ${new Date().getFullYear()} JD System - Todos os direitos reservados.`}></ListItemText>
             </ListItemButton>
             {/* <ListItemButton component="a" href="#">
               <ListItemText primary="Help Center" />

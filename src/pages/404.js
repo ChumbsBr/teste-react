@@ -28,15 +28,15 @@ function Page404() {
         404
       </Typography>
       <Typography component="h2" variant="h5" align="center" gutterBottom>
-        Page not found.
+        Página não encontrada.
       </Typography>
       <Typography component="h2" variant="body1" align="center" gutterBottom>
-        The page you are looking for might have been removed.
+        A página que você está procurando pode ter sido removida.
       </Typography>
 
       <Link href="/" passHref>
         <Button variant="contained" color="secondary" mt={2}>
-          Return to website
+          Volte para o site
         </Button>
       </Link>
     </Wrapper>

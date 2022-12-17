@@ -41,8 +41,8 @@ function App({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
     <CacheProvider value={emotionCache}>
       <HelmetProvider>
         <Helmet
-          titleTemplate="%s | Mira"
-          defaultTitle="Mira - React Material Admin Dashboard"
+          titleTemplate="%s | JD System"
+          defaultTitle="Catálogo - JD System"
         />
         <Provider store={store}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
