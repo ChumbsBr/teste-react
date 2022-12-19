@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import { Helmet } from "react-helmet-async";
 import { CreateData } from "../../functions/crud";
 
+
 import {
   Alert as MuiAlert,
   Box,
@@ -44,17 +45,20 @@ const validationSchema = Yup.object().shape({
 
 const url = "https://localhost:7228/produtos"
 
-function BasicForm() {
 
+
+
+function BasicForm() {
+  
   const handleSubmit = async (
     values,
     { resetForm, setErrors, setStatus, setSubmitting }
   ) => {
-    try {
+    try {      
       resetForm();
       setStatus({ sent: true });
       setSubmitting(false);
-      CreateData(url, values)
+      CreateData(url, values);      
     } catch (error) {
       setStatus({ sent: false });
       setErrors({ submit: error.message });
@@ -81,11 +85,9 @@ function BasicForm() {
         <Card mb={6}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              TESTE
+              Novo Produto
             </Typography>
-            <Typography variant="body2" gutterBottom>
-              TESTE
-            </Typography>
+            
 
             {isSubmitting ? (
               <Box display="flex" justifyContent="center" my={6}>
@@ -131,6 +133,7 @@ function BasicForm() {
 }
 
 function FormikPage() {
+  
   return (
     <React.Fragment>
       <Helmet title="Criar Produto" />
