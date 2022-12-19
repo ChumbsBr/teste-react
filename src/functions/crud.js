@@ -16,6 +16,7 @@ export const DeleteData = (url, dataId) =>{
     fetch(url, {
       method: 'DELETE',
     })
+    // window.location.reload(true);
     // alert(`Dado de ID ${dataId} deletado com sucesso!`)
 }
 

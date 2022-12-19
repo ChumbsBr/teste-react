@@ -45,7 +45,9 @@ import { spacing } from "@mui/system";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import { Settings } from "react-feather";
+
+import { useQueryClient, useMutation } from "react-query"
+import axios from "axios";
 
 const fakeData = {Descricao: "Produto adicionado"}
 const url = "https://localhost:7228/produtos"
@@ -184,12 +186,12 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable() {
 
-  const [tableData, setTableData] = useState([])
+  const [tableData, setTableData] = useState([])  
   useEffect(()=>{
     fetch("https://localhost:7228/produtos")
     .then(res=>res.json())
     .then((data=>{
-      console.log(data)
+
       setTableData(data)
     }))
     .catch((err) => console.log(err))

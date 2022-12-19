@@ -25,6 +25,8 @@ import { spacing } from "@mui/system";
 
 import DashboardLayout from "../../layouts/Dashboard";
 
+import { useQueryClient,  QueryClientProvider, useMutation } from "react-query"
+
 const Divider = styled(MuiDivider)(spacing);
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
@@ -45,10 +47,14 @@ const validationSchema = Yup.object().shape({
 
 const url = "https://localhost:7228/produtos"
 
+export const getProduct = async () => {
+  const response = await fetch("https://localhost:7228/produtos")
+  const json = await response.json()
 
+  return json;
+}
 
-
-function BasicForm() {
+function BasicForm() {  
   
   const handleSubmit = async (
     values,
@@ -58,7 +64,7 @@ function BasicForm() {
       resetForm();
       setStatus({ sent: true });
       setSubmitting(false);
-      CreateData(url, values);      
+      CreateData(url, values);   
     } catch (error) {
       setStatus({ sent: false });
       setErrors({ submit: error.message });
@@ -67,7 +73,7 @@ function BasicForm() {
   };
 
   return (
-    <Formik
+      <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -113,14 +119,15 @@ function BasicForm() {
                 </Grid>
 
                 <Box display="flex" justifyContent="right">
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        mt={3}
-                        >
-                        Salvar alterações
-                    </Button>
+                
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    mt={3}
+                    >
+                    Salvar alterações
+                  </Button>
                 </Box>
                 
               </form>
@@ -128,7 +135,7 @@ function BasicForm() {
           </CardContent>
         </Card>
       )}
-    </Formik>
+      </Formik>
   );
 }
 
@@ -145,7 +152,7 @@ function FormikPage() {
             <NextLink href="/" passHref>
               <Link>Nome 1</Link>
             </NextLink>
-            <NextLink href="/products" passHref>
+            <NextLink href="/produtos" passHref>
               <Link>Lista de Produtos</Link>
             </NextLink>
             <Typography>Criar Produto</Typography>
