@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
@@ -25,7 +25,7 @@ import { spacing } from "@mui/system";
 
 import DashboardLayout from "../../layouts/Dashboard";
 
-import { useQueryClient,  QueryClientProvider, useMutation } from "react-query"
+import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -41,36 +41,52 @@ const Button = styled(MuiButton)(spacing);
 
 const initialValues = {};
 
-const validationSchema = Yup.object().shape({
-  descricao: Yup.string().required("Campo obrigatório"),
-});
-
-const url = "https://localhost:7228/produtos"
-
-export const getProduct = async () => {
-  const response = await fetch("https://localhost:7228/produtos")
-  const json = await response.json()
-
-  return json;
-}
+const BASEURL = "https://localhost:7228"
+const url = BASEURL+"/produtos"
 
 function BasicForm() {  
-  
-  const handleSubmit = async (
-    values,
-    { resetForm, setErrors, setStatus, setSubmitting }
-  ) => {
-    try {      
-      resetForm();
-      setStatus({ sent: true });
-      setSubmitting(false);
-      CreateData(url, values);   
-    } catch (error) {
-      setStatus({ sent: false });
-      setErrors({ submit: error.message });
-      setSubmitting(false);
+  const [formValues, setFormValues] = useState({});
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    const data = formValues[name] || {};
+
+    setFormValues({ ...formValues, [name]: value });
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    if(data){
+      CreateData(url, data);
+      navigate(-1); // solução provisória
     }
-  };
+
+  }
+
+  console.log(formValues.descricao)
+
+  let errorResponse = undefined
+
+  if(!formValues.descricao){
+    errorResponse = Yup.string().required("Campo obrigatório")
+  }
+  else if(formValues.descricao.length <= 1){
+    console
+    errorResponse = errorResponse = Yup.string().required("Descrição muito curta")
+  }
+  else{
+    errorResponse = undefined
+  }
+  
+
+  const validationSchema = Yup.object().shape({
+    descricao: errorResponse,
+  });
 
   return (
       <Formik
@@ -81,8 +97,6 @@ function BasicForm() {
       {({
         errors,
         handleBlur,
-        handleChange,
-        handleSubmit,
         isSubmitting,
         touched,
         values,
@@ -119,13 +133,7 @@ function BasicForm() {
                 </Grid>
 
                 <Box display="flex" justifyContent="right">
-                
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    mt={3}
-                    >
+                  <Button type="submit" variant="contained" color="primary" mt={3} >
                     Salvar alterações
                   </Button>
                 </Box>
@@ -140,28 +148,27 @@ function BasicForm() {
 }
 
 function FormikPage() {
-  
   return (
-    <React.Fragment>
+    <>
       <Helmet title="Criar Produto" />
       <Typography variant="h3" gutterBottom display="inline">
         Criação do Produto
       </Typography>
-      
-        <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-            <NextLink href="/" passHref>
-              <Link>Nome 1</Link>
-            </NextLink>
-            <NextLink href="/produtos" passHref>
-              <Link>Lista de Produtos</Link>
-            </NextLink>
-            <Typography>Criar Produto</Typography>
-        </Breadcrumbs>
+
+          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+              <NextLink href="/" passHref>
+                <Link>Nome 1</Link>
+              </NextLink>
+              <NextLink href="/produtos" passHref>
+                <Link>Lista de Produtos</Link>
+              </NextLink>
+              <Typography>Criar Produto</Typography>
+          </Breadcrumbs>
 
       <Divider my={6} />
 
-      <BasicForm />
-    </React.Fragment>
+      <Router><BasicForm /></Router>
+    </>
   );
 }
 

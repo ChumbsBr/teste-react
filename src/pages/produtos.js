@@ -186,16 +186,22 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable() {
 
-  const [tableData, setTableData] = useState([])  
+  const [tableData, setTableData] = useState([])
+  const [updateTable, setupdateTable] = useState(true)
+
+  function refreshComponent(){
+    setupdateTable(true)
+  }
+
   useEffect(()=>{
     fetch("https://localhost:7228/produtos")
     .then(res=>res.json())
     .then((data=>{
-
+      setupdateTable(false)
       setTableData(data)
     }))
     .catch((err) => console.log(err))
-  }, [])
+  }, [updateTable])
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
@@ -256,9 +262,9 @@ function EnhancedTable() {
 
   const [idProduct, setIdProduct] = React.useState();
 
-  function handleClickOpen(teste){
+  function handleClickOpen(IdProduct){
     setOpen(true);
-    setIdProduct(teste);
+    setIdProduct(IdProduct);
   };
 
   function handleClose(){
@@ -311,19 +317,16 @@ function EnhancedTable() {
                       <TableCell align="left">{row.descricao}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          {/* passar ID do produto */}
                           <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
-                            <EditIcon />
-                          </IconButton>
-
-                          {/* passar ID do produto */}
+                                  <EditIcon />
+                                </IconButton>
+                        
                           <NextLink href="/invoices/detail" passHref> 
                             <IconButton aria-label="details" size="large">
                               <RemoveRedEyeIcon />
                             </IconButton>
                           </NextLink>
 
-                          {/* passar ID do produto */}
                           <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
                             <DeleteIcon />
                           </IconButton>
@@ -346,7 +349,7 @@ function EnhancedTable() {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct)}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct); refreshComponent()}}color="primary" autoFocus>
                                 Sim
                               </Button>
                             </DialogActions>

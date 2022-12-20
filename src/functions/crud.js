@@ -16,8 +16,6 @@ export const DeleteData = (url, dataId) =>{
     fetch(url, {
       method: 'DELETE',
     })
-    // window.location.reload(true);
-    // alert(`Dado de ID ${dataId} deletado com sucesso!`)
 }
 
 export const UpdateData = (url, dataId, data) => {
@@ -32,7 +30,7 @@ export const UpdateData = (url, dataId, data) => {
       },
     })
     .then((response) => response)
-    // return(alert("ATUALIZADO"))
+
 }
 
 function teste(){
