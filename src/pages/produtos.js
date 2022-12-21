@@ -259,12 +259,21 @@ function EnhancedTable() {
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
 
   const [open, setOpen] = React.useState(false);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
 
   const [idProduct, setIdProduct] = React.useState();
 
   function handleClickOpen(IdProduct){
     setOpen(true);
     setIdProduct(IdProduct);
+  };
+
+  function handleClickOpenConfirm(){
+    setOpenConfirm(true);
+  };
+
+  function handleCloseConfirm(){
+    return setOpenConfirm(false);
   };
 
   function handleClose(){
@@ -317,14 +326,20 @@ function EnhancedTable() {
                       <TableCell align="left">{row.descricao}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
-                                  <EditIcon />
-                                </IconButton>
+                          <NextLink href="/forms/productForm/" passHref>
+                            {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
+                            <Link>
+                              {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
+                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
+                              <EditIcon />
+                              </IconButton>
+                            </Link>
+                          </NextLink>
                         
                           <NextLink href="/invoices/detail" passHref> 
-                            <IconButton aria-label="details" size="large">
+                            <Link><IconButton aria-label="details" size="large">
                               <RemoveRedEyeIcon />
-                            </IconButton>
+                            </IconButton></Link>
                           </NextLink>
 
                           <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
@@ -349,8 +364,29 @@ function EnhancedTable() {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct); refreshComponent()}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(url, idProduct); refreshComponent();}}color="primary" autoFocus>
                                 Sim
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+
+                          <Dialog
+                            open={openConfirm}
+                            onClose={handleCloseConfirm}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Produto ${idProduct} deletado`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Ele não aparecerá mas na lista.
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseConfirm} color="primary">
+                                Ok
                               </Button>
                             </DialogActions>
                           </Dialog>

@@ -39,10 +39,14 @@ const TextField = styled(MuiTextField)(spacing);
 
 const Button = styled(MuiButton)(spacing);
 
-const initialValues = {};
+let initialValues = {}
 
 const BASEURL = "https://localhost:7228"
 const url = BASEURL+"/produtos"
+
+// export function DataForm(teste){
+//   initialValues = teste
+// }
 
 function BasicForm() {  
   const [formValues, setFormValues] = useState({});
@@ -51,24 +55,8 @@ function BasicForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    const data = formValues[name] || {};
-
     setFormValues({ ...formValues, [name]: value });
   }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    if(data){
-      CreateData(url, data);
-      navigate(-1); // solução provisória
-    }
-
-  }
-
-  console.log(formValues.descricao)
 
   let errorResponse = undefined
 
@@ -76,21 +64,35 @@ function BasicForm() {
     errorResponse = Yup.string().required("Campo obrigatório")
   }
   else if(formValues.descricao.length <= 1){
-    console
     errorResponse = errorResponse = Yup.string().required("Descrição muito curta")
   }
   else{
     errorResponse = undefined
   }
-  
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    if(errorResponse == undefined){
+      CreateData(url, data);
+      navigate(-1); // solução provisória
+      // navigate("/produtos", {replace: true});
+    }
+
+  }  
 
   const validationSchema = Yup.object().shape({
     descricao: errorResponse,
   });
 
+  let temp = initialValues
+  initialValues = {}
+
   return (
       <Formik
-      initialValues={initialValues}
+      initialValues={temp}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
@@ -114,7 +116,7 @@ function BasicForm() {
                 <CircularProgress />
               </Box>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} >
                 <Grid container spacing={6} >
                   <Grid item md={6}>
                     <TextField
