@@ -47,11 +47,6 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useQueryClient, useMutation } from "react-query"
-import axios from "axios";
-
-const fakeData = {Descricao: "Produto adicionado"}
-
 const newData = {Descricao: "Produto atualizado"}
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
@@ -158,7 +153,7 @@ const EnhancedTableToolbar = (props) => {
       <ToolbarTitle>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} selecionado
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
@@ -188,6 +183,7 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable() {
   const { url } = React.useContext(AuthContext);
+  const urlBase = url + '/produtos'
   const [tableData, setTableData] = useState([])
   const [updateTable, setupdateTable] = useState(true)
 
@@ -196,7 +192,7 @@ function EnhancedTable() {
   }
 
   useEffect(()=>{
-    fetch(url + '/produtos')
+    fetch(urlBase)
     .then(res=>res.json())
     .then((data=>{
       setupdateTable(false)
@@ -332,7 +328,7 @@ function EnhancedTable() {
                             {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
                             <Link>
                               {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
-                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
+                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(urlBase, row.id, newData)}>
                               <EditIcon />
                               </IconButton>
                             </Link>
@@ -366,7 +362,7 @@ function EnhancedTable() {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(url, idProduct); refreshComponent();}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, idProduct); refreshComponent();}}color="primary" autoFocus>
                                 Sim
                               </Button>
                             </DialogActions>

@@ -48,7 +48,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-const fakeData = {NomeFantasia: "Cliente adicionado", Cnpj: "79990880000140"}
 
 const newData = {NomeFantasia: "Cliente Alterado", Cnpj: "15440770000141"}
 
@@ -63,10 +62,6 @@ const Spacer = styled.div`
 const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
-
-const url = "https://localhost:7228/clientes"
-
-const newData = {Descricao: "Produto atualizado"}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -158,7 +153,7 @@ const EnhancedTableToolbar = (props) => {
       <ToolbarTitle>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} selecionado
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
@@ -188,6 +183,7 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable() {
   const { url } = React.useContext(AuthContext);
+  const urlBase = url + '/clientes'
   const [tableData, setTableData] = useState([])
   const [updateTable, setupdateTable] = useState(true)
 
@@ -196,7 +192,7 @@ function EnhancedTable() {
   }
 
   useEffect(()=>{
-    fetch(url + '/clientes')
+    fetch(urlBase)
     .then(res=>res.json())
     .then((data=>{
       setupdateTable(false)
@@ -333,7 +329,7 @@ function EnhancedTable() {
                             {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
                             <Link>
                               {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
-                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
+                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(urlBase, row.id, newData)}>
                               <EditIcon />
                               </IconButton>
                             </Link>
@@ -367,7 +363,7 @@ function EnhancedTable() {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(url, idCliente); refreshComponent();}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, idCliente); refreshComponent();}}color="primary" autoFocus>
                                 Sim
                               </Button>
                             </DialogActions>

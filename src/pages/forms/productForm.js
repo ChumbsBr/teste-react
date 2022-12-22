@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { Formik } from "formik";
 import { Helmet } from "react-helmet-async";
 import { CreateData } from "../../functions/crud";
-
+import { AuthContext } from "../../contexts/JWTContext";
 
 import {
   Alert as MuiAlert,
@@ -41,11 +41,11 @@ const Button = styled(MuiButton)(spacing);
 
 let initialValues = {}
 
-const { url } = React.useContext(AuthContext);
-
-const urlbase = url +"/produtos"
-
 function BasicForm() {  
+  const { url } = React.useContext(AuthContext);
+
+  const urlBase = url +"/produtos"
+
   const [formValues, setFormValues] = useState({});
   const navigate = useNavigate();
 
@@ -53,18 +53,6 @@ function BasicForm() {
     const { name, value } = e.target;
 
     setFormValues({ ...formValues, [name]: value });
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    if(data){
-      CreateData(urlbase, data);
-      navigate(-1); // solução provisória
-    }
-
   }
 
   console.log(formValues.descricao)
@@ -87,7 +75,7 @@ function BasicForm() {
     const data = Object.fromEntries(formData);
 
     if(errorResponse == undefined){
-      CreateData(url, data);
+      CreateData(urlBase, data);
       navigate(-1); // solução provisória
       // navigate("/produtos", {replace: true});
     }
