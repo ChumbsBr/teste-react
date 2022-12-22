@@ -10,7 +10,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import "chart.js/auto";
 
 // Note: Remove the following line if you want to disable the API mocks.
-import "../mocks";
 
 import "../vendor/jvectormap.css";
 import "../vendor/perfect-scrollbar.css";

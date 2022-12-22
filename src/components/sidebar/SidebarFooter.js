@@ -41,7 +41,7 @@ const SidebarFooter = ({ ...rest }) => {
 
   return (
     <Footer {...rest}>
-      <Grid container spacing={2}>
+       <Grid container spacing={2}>
         <Grid item>
           <FooterBadge
             overlap="circular"
@@ -51,15 +51,23 @@ const SidebarFooter = ({ ...rest }) => {
             }}
             variant="dot"
           >
-            {!!user && <Avatar alt={user.displayName} src={user.avatar} />}
+            {!!user && <Avatar alt={user.nome} src={user.foto} />}
             {/* Demo data */}
             {!user && (
               <Avatar
-                alt="Lucy Lavender"
-                src="/static/img/avatars/avatar-1.jpg"
+                alt="Usuário"
+                src="/static/img/avatars/avatar.jpg"
               />
             )}
           </FooterBadge>
+        </Grid>
+        <Grid item>
+          {!!user && (<FooterText variant="body2">{user.nome}</FooterText> )}
+          {!!user && (<FooterSubText variant="caption">{user.cargo}</FooterSubText> )}
+          
+          {/* Demo data */}
+          {!user && <FooterText variant="body2">Usuário</FooterText>}
+          {!user && <FooterSubText variant="caption">Cargo</FooterSubText>}
         </Grid>
       </Grid>
     </Footer>

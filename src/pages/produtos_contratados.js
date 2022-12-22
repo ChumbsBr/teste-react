@@ -174,7 +174,7 @@ function EnhancedTable() {
 
   const [tableData, setTableData] = useState([])
   useEffect(()=>{
-    fetch("https://localhost:7228/produtos")
+    fetch( url + '/produtosContratados")
     .then(res=>res.json())
     .then((data=>{
       console.log(data)
@@ -356,7 +356,7 @@ function EnhancedTable() {
 const fakeData = {Descricao: "Produto adicionado"}
 
 function CreateContractedProduct(){
-  fetch("https://localhost:7228/produtos", {
+  fetch(  url + "/produtos]", {
     method: 'POST',
     body: JSON.stringify(fakeData),
     headers: {

@@ -27,22 +27,20 @@ function SignIn() {
   return (
     <Formik
       initialValues={{
-        email: "demo@bootlab.io",
-        password: "unsafepassword",
+        login: "daniel",
+        senha: "123",
         submit: false,
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email("Must be a valid email")
+        login: Yup.string()
           .max(255)
-          .required("Email is required"),
-        password: Yup.string().max(255).required("Password is required"),
+          .required("Login is required"),
+          senha: Yup.string().max(255).required("Senha is required"),
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          await signIn(values.email, values.password);
-
-          router.push("/private");
+          await signIn(values.login, values.senha);
+          router.push("/");
         } catch (error) {
           const message = error.message || "Something went wrong";
 
@@ -61,36 +59,32 @@ function SignIn() {
         touched,
         values,
       }) => (
-        <form noValidate onSubmit={handleSubmit}>
-          <Alert mt={3} mb={3} severity="info">
-            Use <strong>demo@bootlab.io</strong> and{" "}
-            <strong>unsafepassword</strong> to sign in
-          </Alert>
+        <form noValidate onSubmit={handleSubmit}>         
           {errors.submit && (
             <Alert mt={2} mb={3} severity="warning">
               {errors.submit}
             </Alert>
           )}
           <TextField
-            type="email"
-            name="email"
-            label="Email Address"
-            value={values.email}
-            error={Boolean(touched.email && errors.email)}
+            type="text"
+            name="login"
+            label="Login"
+            value={values.login}
+            error={Boolean(touched.login && errors.login)}
             fullWidth
-            helperText={touched.email && errors.email}
+            helperText={touched.login && errors.login}
             onBlur={handleBlur}
             onChange={handleChange}
             my={2}
           />
           <TextField
             type="password"
-            name="password"
-            label="Password"
-            value={values.password}
-            error={Boolean(touched.password && errors.password)}
+            name="senha"
+            label="Senha"
+            value={values.senha}
+            error={Boolean(touched.senha && errors.senha)}
             fullWidth
-            helperText={touched.password && errors.password}
+            helperText={touched.senha && errors.senha}
             onBlur={handleBlur}
             onChange={handleChange}
             my={2}

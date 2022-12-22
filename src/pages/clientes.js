@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
 import { CreateData, DeleteData, UpdateData } from "../../src/functions/crud";
+import { AuthContext } from "../contexts/JWTContext";
 
 import {
   Alert,
@@ -43,7 +44,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // import { Settings } from "react-feather";
 
 const fakeData = {NomeFantasia: "Cliente adicionado", Cnpj: "79990880000140"}
-const url = "https://localhost:7228/clientes"
+
 const newData = {NomeFantasia: "Cliente Alterado", Cnpj: "15440770000141"}
 
 const Divider = styled(MuiDivider)(spacing);
@@ -177,10 +178,10 @@ const EnhancedTableToolbar = (props) => {
 };
 
 function EnhancedTable() {
-
+  const { url } = React.useContext(AuthContext);
   const [tableData, setTableData] = useState([])
   useEffect(()=>{
-    fetch("https://localhost:7228/clientes")
+    fetch(url + '/clientes')
     .then(res=>res.json())
     .then((data=>{
       console.log(data)

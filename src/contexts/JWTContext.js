@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer } from "react";
+import SignIn from "../components/auth/SignIn";
 
 import axios from "../utils/axios";
 import { isValidToken, setSession } from "../utils/jwt";
@@ -53,18 +54,18 @@ const JWTReducer = (state, action) => {
 const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(JWTReducer, initialState);
-
+  const [state, dispatch] = useReducer(JWTReducer, initialState);  
+  const url = "https://localhost:7228";
   useEffect(() => {
     const initialize = async () => {
       try {
-        const accessToken = window.localStorage.getItem("accessToken");
+        const token = window.localStorage.getItem("token");
 
-        if (accessToken && isValidToken(accessToken)) {
-          setSession(accessToken);
+        if (token && isValidToken(token)) {
+          setSession(token);
 
           const response = await axios.get("/api/auth/my-account");
-          const { user } = response.data;
+          const { user } = response.data.user.nome;
 
           dispatch({
             type: INITIALIZE,
@@ -97,14 +98,15 @@ function AuthProvider({ children }) {
     initialize();
   }, []);
 
-  const signIn = async (email, password) => {
-    const response = await axios.post("/api/auth/sign-in", {
-      email,
-      password,
+  const signIn = async (login, senha) => {
+    const response = await axios.post(url + "/login", {
+      login,
+      senha,
     });
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
+    const {token, user} = response.data;
+    setSession(token);
+    AuthContext.user = user;  
+    console.log(AuthContext);
     dispatch({
       type: SIGN_IN,
       payload: {
@@ -147,6 +149,7 @@ function AuthProvider({ children }) {
         signOut,
         signUp,
         resetPassword,
+        url
       }}
     >
       {children}

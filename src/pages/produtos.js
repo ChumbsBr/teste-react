@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
 import { DeleteData, UpdateData } from "../../src/functions/crud";
+import { AuthContext } from "../contexts/JWTContext";
 
 import {
   Alert,
@@ -50,7 +51,7 @@ import { useQueryClient, useMutation } from "react-query"
 import axios from "axios";
 
 const fakeData = {Descricao: "Produto adicionado"}
-const url = "https://localhost:7228/produtos"
+
 const newData = {Descricao: "Produto atualizado"}
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
@@ -58,6 +59,7 @@ const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 
 const Paper = styled(MuiPaper)(spacing);
+
 
 const Spacer = styled.div`
   flex: 1 1 100%;
@@ -185,7 +187,7 @@ const EnhancedTableToolbar = (props) => {
 };
 
 function EnhancedTable() {
-
+  const { url } = React.useContext(AuthContext);
   const [tableData, setTableData] = useState([])
   const [updateTable, setupdateTable] = useState(true)
 
@@ -194,7 +196,7 @@ function EnhancedTable() {
   }
 
   useEffect(()=>{
-    fetch("https://localhost:7228/produtos")
+    fetch(url + '/produtos')
     .then(res=>res.json())
     .then((data=>{
       setupdateTable(false)
@@ -317,7 +319,7 @@ function EnhancedTable() {
                       <TableCell align="left">{row.descricao}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
+                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url + "/produtos" , row.id, newData)}>
                                   <EditIcon />
                                 </IconButton>
                         
@@ -349,7 +351,7 @@ function EnhancedTable() {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); DeleteData(url, idProduct); refreshComponent()}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); DeleteData(url + "/produtos", idProduct); refreshComponent()}}color="primary" autoFocus>
                                 Sim
                               </Button>
                             </DialogActions>
