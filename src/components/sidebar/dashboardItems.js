@@ -14,7 +14,7 @@ const pagesCatalog = [
     title: "Clientes",
   },
   {
-    href: "/produtoscontratados",
+    href: "/produtos_contratados",
     icon: ShoppingBag,
     title: "Produtos Contratados",
   },

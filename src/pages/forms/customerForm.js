@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
-import { Formik } from "formik";
+import { Formik, yupToFormErrors } from "formik";
 import { Helmet } from "react-helmet-async";
 import { CreateData } from "../../functions/crud";
-
 
 import {
   Alert as MuiAlert,
@@ -42,11 +41,28 @@ const Button = styled(MuiButton)(spacing);
 let initialValues = {}
 
 const BASEURL = "https://localhost:7228"
-const url = BASEURL+"/produtos"
+const url = BASEURL+"/clientes"
 
-// export function DataForm(teste){
-//   initialValues = teste
-// }
+function ValidacaoNomeFantasia(formValues){
+    if(!formValues.nomeFantasia){
+        return Yup.string().required("Campo obrigatório")
+      }
+      else if(formValues.nomeFantasia && formValues.nomeFantasia.length <= 2){
+        return Yup.string().required("Descrição muito curta")
+      }
+      else{
+        return undefined
+      }
+}
+
+function ValidacaoCnpj(formValues){
+    if(!formValues.cnpj){
+        return Yup.string().required("Campo obrigatório")
+      }
+      else{    
+        return undefined
+      }
+}
 
 function BasicForm() {  
   const [formValues, setFormValues] = useState({});
@@ -58,38 +74,31 @@ function BasicForm() {
     setFormValues({ ...formValues, [name]: value });
   }
 
-  let errorResponse = undefined
+  let errorResponse = {"campoNomeFantasia": undefined, "campoCnpj": undefined}
 
-  if(!formValues.descricao){
-    errorResponse = Yup.string().required("Campo obrigatório")
-  }
-  else if(formValues.descricao.length <= 1){
-    errorResponse = Yup.string().required("Descrição muito curta")
-  }
-  else{
-    errorResponse = undefined
-  }
+  errorResponse.campoNomeFantasia = ValidacaoNomeFantasia(formValues)
+  errorResponse.campoCnpj = ValidacaoCnpj(formValues)
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
 
-    if(errorResponse == undefined){
-      CreateData(url, data);
-      navigate(-1); // solução provisória
-      // navigate("/produtos", {replace: true});
+    if(errorResponse.campoNomeFantasia == undefined && errorResponse.campoCnpj == undefined){
+        CreateData(url, data);
+        navigate(-1); // solução provisória
     }
 
   }  
 
   const validationSchema = Yup.object().shape({
-    descricao: errorResponse,
+    nomeFantasia: errorResponse.campoNomeFantasia,
+    cnpj: errorResponse.campoCnpj,
   });
 
   let temp = initialValues
   initialValues = {}
-
+  console.log(validationSchema)
   return (
       <Formik
       initialValues={temp}
@@ -107,7 +116,7 @@ function BasicForm() {
         <Card mb={6}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Novo Produto
+              Novo Cliente
             </Typography>
             
 
@@ -120,12 +129,24 @@ function BasicForm() {
                 <Grid container spacing={6} >
                   <Grid item md={6}>
                     <TextField
-                      name="descricao"
-                      label="Descrição do produto"
-                      value={values.descricao}
-                      error={Boolean(touched.descricao && errors.descricao)}
+                      name="nomeFantasia"
+                      label="Nome Fantasia"
+                      value={values.nomeFantasia}
+                      error={Boolean(touched.nomeFantasia && errors.nomeFantasia)}
                       fullWidth
-                      helperText={touched.descricao && errors.descricao}
+                      helperText={touched.nomeFantasia && errors.nomeFantasia}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      variant="outlined"
+                      my={2}
+                    />
+                    <TextField
+                      name="cnpj"
+                      label="CNPJ"
+                      value={values.cnpj}
+                      error={Boolean(touched.cnpj && errors.cnpj)}
+                      fullWidth
+                      helperText={touched.cnpj && errors.cnpj}
                       onBlur={handleBlur}
                       onChange={handleChange}
                       variant="outlined"
@@ -154,17 +175,17 @@ function FormikPage() {
     <>
       <Helmet title="Criar Produto" />
       <Typography variant="h3" gutterBottom display="inline">
-        Criação do Produto
+        Criação do Cliente
       </Typography>
 
           <Breadcrumbs aria-label="Breadcrumb" mt={2}>
               <NextLink href="/" passHref>
                 <Link>Nome 1</Link>
               </NextLink>
-              <NextLink href="/produtos" passHref>
-                <Link>Lista de Produtos</Link>
+              <NextLink href="/clientes" passHref>
+                <Link>Lista de Clientes</Link>
               </NextLink>
-              <Typography>Criar Produto</Typography>
+              <Typography>Criar Cliente</Typography>
           </Breadcrumbs>
 
       <Divider my={6} />

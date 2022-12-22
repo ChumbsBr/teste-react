@@ -4,7 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
-import { CreateData, DeleteData, UpdateData } from "../../src/functions/crud";
+import { DeleteData, UpdateData } from "../../src/functions/crud";
 
 import {
   Alert,
@@ -13,6 +13,11 @@ import {
   Button,
   Checkbox,
   Chip as MuiChip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider as MuiDivider,
   Grid,
   IconButton,
@@ -40,11 +45,8 @@ import { spacing } from "@mui/system";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import { Settings } from "react-feather";
 
-const fakeData = {NomeFantasia: "Cliente adicionado", Cnpj: "79990880000140"}
-const url = "https://localhost:7228/clientes"
-const newData = {NomeFantasia: "Cliente Alterado", Cnpj: "15440770000141"}
+const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -57,6 +59,10 @@ const Spacer = styled.div`
 const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
+
+const url = "https://localhost:7228/clientes"
+
+const newData = {Descricao: "Produto atualizado"}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -152,7 +158,7 @@ const EnhancedTableToolbar = (props) => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            Lista de Clientes
+            Lista de Produtos
           </Typography>
         )}
       </ToolbarTitle>
@@ -179,15 +185,21 @@ const EnhancedTableToolbar = (props) => {
 function EnhancedTable() {
 
   const [tableData, setTableData] = useState([])
+  const [updateTable, setupdateTable] = useState(true)
+
+  function refreshComponent(){
+    setupdateTable(true)
+  }
+
   useEffect(()=>{
     fetch("https://localhost:7228/clientes")
     .then(res=>res.json())
     .then((data=>{
-      console.log(data)
+      setupdateTable(false)
       setTableData(data)
     }))
     .catch((err) => console.log(err))
-  }, [])
+  }, [updateTable])
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
@@ -244,6 +256,28 @@ function EnhancedTable() {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
 
+  const [open, setOpen] = React.useState(false);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+
+  const [idCliente, setIdCliente] = React.useState();
+
+  function handleClickOpen(idCliente){
+    setOpen(true);
+    setIdCliente(idCliente);
+  };
+
+  function handleClickOpenConfirm(){
+    setOpenConfirm(true);
+  };
+
+  function handleCloseConfirm(){
+    return setOpenConfirm(false);
+  };
+
+  function handleClose(){
+    return setOpen(false);
+  };
+
   return (
     <div>
       <Paper>
@@ -291,22 +325,70 @@ function EnhancedTable() {
                       <TableCell align="left">{row.cnpj}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          {/* passar ID do cliente */}
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData) }>
-                            <EditIcon />
-                          </IconButton>
-
-                          {/* passar ID do cliente */}
+                          <NextLink href="/forms/productForm/" passHref>
+                            {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
+                            <Link>
+                              {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
+                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(url, row.id, newData)}>
+                              <EditIcon />
+                              </IconButton>
+                            </Link>
+                          </NextLink>
+                        
                           <NextLink href="/invoices/detail" passHref> 
-                            <IconButton aria-label="details" size="large">
+                            <Link><IconButton aria-label="details" size="large">
                               <RemoveRedEyeIcon />
-                            </IconButton>
+                            </IconButton></Link>
                           </NextLink>
 
-                          {/* passar ID do cliente */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteData(url, row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
                             <DeleteIcon />
                           </IconButton>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Deletar produto ${idCliente}`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Você tem certeza que deseja deletar este cliente?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose} color="primary">
+                                Não
+                              </Button>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(url, idCliente); refreshComponent();}}color="primary" autoFocus>
+                                Sim
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+
+                          <Dialog
+                            open={openConfirm}
+                            onClose={handleCloseConfirm}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Cliente ${idCliente} deletado`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Ele não aparecerá mas na lista.
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseConfirm} color="primary">
+                                Ok
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
 
                         </Box>
                       </TableCell>
@@ -335,41 +417,53 @@ function EnhancedTable() {
   );
 }
 
-function CustomerList() {
+function  CustomerList() {
   
   return (
     <>
-      <Helmet title="Clientes" />
-      <Grid justifyContent="space-between" container spacing={10}>
+      <Helmet title="Produtos" />
+      <>
+        <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Clientes
           </Typography>
 
+          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+            <NextLink href="/" passHref>
+              <Link>Nome 1</Link>
+            </NextLink>
+            <NextLink href="/" passHref>
+              <Link>Nome 2</Link>
+            </NextLink>
+            <Typography>Lista de Clientes</Typography>
+          </Breadcrumbs>
+
         </Grid>
         <Grid item>
-          <div>
-            <Button onClick={() => CreateData(url, fakeData)} variant="contained" color="primary" >
-              <AddIcon />
-              Criar Cliente
-            </Button>
-          </div>
+          <NextLink href="/forms/customerForm" passHref>
+              <Link><Button variant="contained" color="primary" >
+                <AddIcon />
+                Criar Cliente
+              </Button></Link>
+          </NextLink>
         </Grid>
-      </Grid>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <EnhancedTable/> 
         </Grid>
-      </Grid>
+
+        <Divider my={6} />
+
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <EnhancedTable/> 
+          </Grid>
+        </Grid>
+      </>
     </>
   );
 }
 
-CustomerList.getLayout = function getLayout(page) {
+ CustomerList.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default CustomerList;
+export default  CustomerList;

@@ -46,10 +46,6 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { useQueryClient, useMutation } from "react-query"
-import axios from "axios";
-
-const fakeData = {Descricao: "Produto adicionado"}
 const url = "https://localhost:7228/produtos"
 const newData = {Descricao: "Produto atualizado"}
 
