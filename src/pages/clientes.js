@@ -64,10 +64,6 @@ const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
 
-const url = "https://localhost:7228/clientes"
-
-const newData = {Descricao: "Produto atualizado"}
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;

@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import Settings from "../components/Settings";
+import { AuthContext } from "../contexts/JWTContext";
 
 import {
   Alert,
@@ -171,10 +172,10 @@ const EnhancedTableToolbar = (props) => {
 };
 
 function EnhancedTable() {
-
+  const { url } = React.useContext(AuthContext);
   const [tableData, setTableData] = useState([])
   useEffect(()=>{
-    fetch( url + '/produtosContratados")
+    fetch( url + "/produtosContratados")
     .then(res=>res.json())
     .then((data=>{
       console.log(data)
@@ -239,7 +240,7 @@ function EnhancedTable() {
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
   
   function UpdateContractedProduct(contractedProductId){
-    let url = `https://localhost:7228/produtos/${contractedProductId}`
+    let url = url + `/${contractedProductId}`
 
     fetch(url, {
       method: 'PUT',
@@ -256,7 +257,7 @@ function EnhancedTable() {
   }
 
   function DeleteContractedProduct(contractedProductId){
-    let url = `https://localhost:7228/produtos/${contractedProductId}`
+    let url = url + `/produtos/${contractedProductId}`
     fetch(url, {
       method: 'DELETE',
     })
