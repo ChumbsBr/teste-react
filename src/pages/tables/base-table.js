@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
-import { Helmet } from "react-helmet-async";
-import DashboardLayout from "../layouts/Dashboard";
-import Settings from "../components/Settings";
+import { DeleteData, UpdateData } from "../../functions/crud";
+import { AuthContext } from "../../contexts/JWTContext";
 
 import {
-  Alert,
   Box,
-  Breadcrumbs as MuiBreadcrumbs,
   Button,
   Checkbox,
-  Chip as MuiChip,
-  Divider as MuiDivider,
-  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Link,
   Paper as MuiPaper,
@@ -31,7 +30,6 @@ import {
 } from "@mui/material";
 
 import {
-  Add as AddIcon,
   FilterList as FilterListIcon,
   RemoveRedEye as RemoveRedEyeIcon,
 } from "@mui/icons-material";
@@ -40,9 +38,10 @@ import { spacing } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const Divider = styled(MuiDivider)(spacing);
+const newData = {Descricao: "Produto atualizado"}
 
 const Paper = styled(MuiPaper)(spacing);
+
 
 const Spacer = styled.div`
   flex: 1 1 100%;
@@ -81,11 +80,15 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((element) => element.el);
 }
 
-const headCells = [
-  { id: "id", alignment: "left", label: "ID" },
-  { id: "descricao", alignment: "left", label: "Descrição" },
-  {},
-];
+function headCells(rows) {
+    let headCells = []
+    rows.map((row) => {
+        let label = (row[0].toUpperCase()+row.substring(1)).replace(/([A-Z])/g, ' $1').trim()
+        headCells.push({id:row, alignment:"left", label:label})
+    })
+    headCells.push({})
+    return headCells;
+} 
 
 const EnhancedTableHead = (props) => {
   const {
@@ -95,6 +98,7 @@ const EnhancedTableHead = (props) => {
     numSelected,
     rowCount,
     onRequestSort,
+    heads
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -111,7 +115,7 @@ const EnhancedTableHead = (props) => {
             inputProps={{ "aria-label": "select all" }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
+        {headCells(heads).map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.alignment}
@@ -134,19 +138,19 @@ const EnhancedTableHead = (props) => {
 
 const EnhancedTableToolbar = (props) => {
   // Here was 'let'
-  const { numSelected } = props;
+  const numSelected = props.numSelected;
 
   return (
     <Toolbar>
       <ToolbarTitle>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} selecionado
           </Typography>
         ) : (
-          <pre><Typography variant="h6" id="tableTitle">
-            Lista de Produtos Contratados
-          </Typography></pre>
+          <Typography variant="h6" id="tableTitle">
+            Lista de {props.tableName}
+          </Typography>
         )}
       </ToolbarTitle>
       <Spacer />
@@ -169,19 +173,25 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-function EnhancedTable() {
-
+function EnhancedTable(tableName, modelBase, rows) {
+  const { url } = React.useContext(AuthContext);
+  const urlBase = url + modelBase
   const [tableData, setTableData] = useState([])
+  const [updateTable, setupdateTable] = useState(true)
+
+  function refreshComponent(){
+    setupdateTable(true)
+  }
+
   useEffect(()=>{
-    // fetch( url + '/produtosContratados")
-    fetch( "https://localhost:7228/produtos/" )
+    fetch(urlBase)
     .then(res=>res.json())
     .then((data=>{
-      console.log(data)
+      setupdateTable(false)
       setTableData(data)
     }))
     .catch((err) => console.log(err))
-  }, [])
+  }, [updateTable])
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
@@ -237,36 +247,33 @@ function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
-  
-  function UpdateContractedProduct(contractedProductId){
-    let url = `https://localhost:7228/produtos/${contractedProductId}`
 
-    fetch(url, {
-      method: 'PUT',
-      body: JSON.stringify({
-        descricao: "Produto Alterado",
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then((response) => response)
-    // .then((data) => console.log(data));
-    return(alert("ATUALIZADO"))
-  }
+  const [open, setOpen] = React.useState(false);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
 
-  function DeleteContractedProduct(contractedProductId){
-    let url = `https://localhost:7228/produtos/${contractedProductId}`
-    fetch(url, {
-      method: 'DELETE',
-    })
-    alert(`Produto ${contractedProductId} deletado com sucesso!`)
-  }
+  const [itemId, setitemId] = React.useState();
+
+  function handleClickOpen(itemId){
+    setOpen(true);
+    setitemId(itemId);
+  };
+
+  function handleClickOpenConfirm(){
+    setOpenConfirm(true);
+  };
+
+  function handleCloseConfirm(){
+    return setOpenConfirm(false);
+  };
+
+  function handleClose(){
+    return setOpen(false);
+  };
 
   return (
     <div>
       <Paper>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} tableName = {tableName} />
         <TableContainer>
           <Table
             aria-labelledby="tableTitle"
@@ -280,6 +287,7 @@ function EnhancedTable() {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={tableData.length}
+              heads={rows}
             />
             <TableBody>
               {stableSort(tableData, getComparator(order, orderBy))
@@ -305,26 +313,77 @@ function EnhancedTable() {
                         />
                       </TableCell>
 
-                      <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="left">{row.descricao}</TableCell>
+                        {rows.map((oneRow)=>{
+                            oneRow = oneRow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                            return(<TableCell align="left">{row[oneRow]}</TableCell> )
+                        })}
+
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
-                          {/* passar ID do produto */}
-                          <IconButton aria-label="edit" size="large" onClick={() => UpdateContractedProduct(row.id)}>
-                            <EditIcon />
-                          </IconButton>
-
-                          {/* passar ID do produto */}
+                          <NextLink href="/forms/productForm/" passHref>
+                            {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
+                            <Link>
+                              {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
+                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(urlBase, row.id, newData)}>
+                              <EditIcon />
+                              </IconButton>
+                            </Link>
+                          </NextLink>
+                        
                           <NextLink href="/invoices/detail" passHref> 
-                            <IconButton aria-label="details" size="large">
+                            <Link><IconButton aria-label="details" size="large">
                               <RemoveRedEyeIcon />
-                            </IconButton>
+                            </IconButton></Link>
                           </NextLink>
 
-                          {/* passar ID do produto */}
-                          <IconButton aria-label="delete" size="large" onClick={() => DeleteContractedProduct(row.id)}>
+                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
                             <DeleteIcon />
                           </IconButton>
+
+                          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Deletar item ${itemId}`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Você tem certeza que deseja deletar este item?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleClose} color="primary">
+                                Não
+                              </Button>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, itemId); refreshComponent();}}color="primary" autoFocus>
+                                Sim
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+
+                          <Dialog
+                            open={openConfirm}
+                            onClose={handleCloseConfirm}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {`Item ${itemId} deletado`}
+                            </DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-description">
+                                Este item não aparecerá mas na lista.
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseConfirm} color="primary">
+                                Ok
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
 
                         </Box>
                       </TableCell>
@@ -353,56 +412,12 @@ function EnhancedTable() {
   );
 }
 
-const fakeData = {Descricao: "Produto adicionado"}
-
-function CreateContractedProduct(){
-  fetch(  "https://localhost:7228/produtos/" , {
-    method: 'POST',
-    body: JSON.stringify(fakeData),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-    },
-  })
-  .then((response) => response.json())
-  .then((json) => console.log(json));
-
-}
-
-function ProductList() {
-  
+const BaseTable = ({tableName, modelBase, rows}) => {
   return (
     <>
-      <Helmet title="Produtos Contratados" />
-      <Grid justifyContent="space-between" container spacing={10}>
-        <Grid item>
-          <Typography variant="h3" gutterBottom display="inline">
-            Produtos Contratados
-          </Typography>
-
-        </Grid>
-        <Grid item>
-          <div>
-            <Button onClick={CreateContractedProduct} variant="contained" color="primary" >
-              <AddIcon />
-              Criar Produto Contratado
-            </Button>
-          </div>
-        </Grid>
-      </Grid>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <EnhancedTable/> 
-        </Grid>
-      </Grid>
+        {EnhancedTable(tableName, modelBase, rows)} 
     </>
   );
 }
 
-ProductList.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
-
-export default ProductList;
+export default BaseTable;
