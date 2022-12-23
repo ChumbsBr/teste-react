@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { CreateData } from "../../functions/crud";
 import { AuthContext } from "../../contexts/JWTContext";
 
+
 import {
   Alert as MuiAlert,
   Box,
@@ -41,11 +42,12 @@ const Button = styled(MuiButton)(spacing);
 
 let initialValues = {}
 
+const { url } = React.useContext(AuthContext);
+
+const urlbase = url +"/produtos"
+
 function BasicForm() {  
   const { url } = React.useContext(AuthContext);
-
-  const urlBase = url +"/produtos"
-
   const [formValues, setFormValues] = useState({});
   const navigate = useNavigate();
 
