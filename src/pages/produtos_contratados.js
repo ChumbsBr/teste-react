@@ -39,7 +39,6 @@ import { spacing } from "@mui/system";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import { Settings } from "react-feather";
 
 const Divider = styled(MuiDivider)(spacing);
 
