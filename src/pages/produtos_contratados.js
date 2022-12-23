@@ -357,7 +357,7 @@ function EnhancedTable() {
 const fakeData = {Descricao: "Produto adicionado"}
 
 function CreateContractedProduct(){
-  fetch(  url + "/produtos]", {
+  fetch(  url + "/produtos", {
     method: 'POST',
     body: JSON.stringify(fakeData),
     headers: {
