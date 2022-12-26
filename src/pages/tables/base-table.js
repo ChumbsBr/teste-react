@@ -1,40 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
-import { Helmet } from "react-helmet-async";
-import DashboardLayout from "../layouts/Dashboard";
-import BaseTable from "./tables/base-table"
+import { DeleteData, UpdateData } from "../../functions/crud";
+import { AuthContext } from "../../contexts/JWTContext";
 
 import {
-  Breadcrumbs as MuiBreadcrumbs,
+  Box,
   Button,
-  Divider as MuiDivider,
-  Grid,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
   Link,
+  Paper as MuiPaper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 
 import {
-  Add as AddIcon,
+  FilterList as FilterListIcon,
+  RemoveRedEye as RemoveRedEyeIcon,
 } from "@mui/icons-material";
 import { spacing } from "@mui/system";
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const Divider = styled(MuiDivider)(spacing);
+const newData = {Descricao: "Produto atualizado"}
 
 const Paper = styled(MuiPaper)(spacing);
 
-const cnpjMask = (value) => {
-  console.log(value)
-  return value
-    .replace(/\D+/g, '') // não deixa ser digitado nenhuma letra
-    .replace(/(\d{2})(\d)/, '$1.$2') // captura 2 grupos de número o primeiro com 2 digitos e o segundo de com 3 digitos, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de número
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1/$2') // captura 2 grupos de número o primeiro e o segundo com 3 digitos, separados por /
-    .replace(/(\d{4})(\d)/, '$1-$2')
-    .replace(/(-\d{2})\d+?$/, '$1') // captura os dois últimos 2 números, com um - antes dos dois números
-}
 
 const Spacer = styled.div`
   flex: 1 1 100%;
@@ -73,12 +80,15 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((element) => element.el);
 }
 
-const headCells = [
-  { id: "id", alignment: "left", label: "ID" },
-  { id: "nomeFantasia", alignment: "left", label: "Nome Fantasia" },
-  { id: "cnpj", alignment: "left", label: "CNPJ" },
-  {}
-];
+function headCells(rows) {
+    let headCells = []
+    rows.map((row) => {
+        let label = (row[0].toUpperCase()+row.substring(1)).replace(/([A-Z])/g, ' $1').trim()
+        headCells.push({id:row, alignment:"left", label:label})
+    })
+    headCells.push({})
+    return headCells;
+} 
 
 const EnhancedTableHead = (props) => {
   const {
@@ -88,6 +98,7 @@ const EnhancedTableHead = (props) => {
     numSelected,
     rowCount,
     onRequestSort,
+    heads
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -104,7 +115,7 @@ const EnhancedTableHead = (props) => {
             inputProps={{ "aria-label": "select all" }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
+        {headCells(heads).map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.alignment}
@@ -127,7 +138,7 @@ const EnhancedTableHead = (props) => {
 
 const EnhancedTableToolbar = (props) => {
   // Here was 'let'
-  const { numSelected } = props;
+  const numSelected = props.numSelected;
 
   return (
     <Toolbar>
@@ -138,7 +149,7 @@ const EnhancedTableToolbar = (props) => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            Lista de Clientes
+            Lista de {props.tableName}
           </Typography>
         )}
       </ToolbarTitle>
@@ -151,7 +162,7 @@ const EnhancedTableToolbar = (props) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title=" Filtrar Lista">
+          <Tooltip title="Filter list">
             <IconButton aria-label="Filter list" size="large">
               <FilterListIcon />
             </IconButton>
@@ -162,9 +173,9 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-function EnhancedTable() {
+function EnhancedTable(tableName, modelBase, rows) {
   const { url } = React.useContext(AuthContext);
-  const urlBase = url + '/clientes'
+  const urlBase = url + modelBase
   const [tableData, setTableData] = useState([])
   const [updateTable, setupdateTable] = useState(true)
 
@@ -240,11 +251,11 @@ function EnhancedTable() {
   const [open, setOpen] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
 
-  const [idCliente, setIdCliente] = React.useState();
+  const [itemId, setitemId] = React.useState();
 
-  function handleClickOpen(idCliente){
+  function handleClickOpen(itemId){
     setOpen(true);
-    setIdCliente(idCliente);
+    setitemId(itemId);
   };
 
   function handleClickOpenConfirm(){
@@ -262,7 +273,7 @@ function EnhancedTable() {
   return (
     <div>
       <Paper>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} tableName = {tableName} />
         <TableContainer>
           <Table
             aria-labelledby="tableTitle"
@@ -276,6 +287,7 @@ function EnhancedTable() {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={tableData.length}
+              heads={rows}
             />
             <TableBody>
               {stableSort(tableData, getComparator(order, orderBy))
@@ -301,9 +313,11 @@ function EnhancedTable() {
                         />
                       </TableCell>
 
-                      <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="left">{row.nomeFantasia}</TableCell>
-                      <TableCell align="left">{cnpjMask(row.cnpj)}</TableCell>
+                        {rows.map((oneRow)=>{
+                            oneRow = oneRow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                            return(<TableCell align="left">{row[oneRow]}</TableCell> )
+                        })}
+
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           <NextLink href="/forms/productForm/" passHref>
@@ -333,18 +347,18 @@ function EnhancedTable() {
                             aria-describedby="alert-dialog-description"
                           >
                             <DialogTitle id="alert-dialog-title">
-                              {`Deletar produto ${idCliente}`}
+                              {`Deletar item ${itemId}`}
                             </DialogTitle>
                             <DialogContent>
                               <DialogContentText id="alert-dialog-description">
-                                Você tem certeza que deseja deletar este cliente?
+                                Você tem certeza que deseja deletar este item?
                               </DialogContentText>
                             </DialogContent>
                             <DialogActions>
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, idCliente); refreshComponent();}}color="primary" autoFocus>
+                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, itemId); refreshComponent();}}color="primary" autoFocus>
                                 Sim
                               </Button>
                             </DialogActions>
@@ -357,11 +371,11 @@ function EnhancedTable() {
                             aria-describedby="alert-dialog-description"
                           >
                             <DialogTitle id="alert-dialog-title">
-                              {`Cliente ${idCliente} deletado`}
+                              {`Item ${itemId} deletado`}
                             </DialogTitle>
                             <DialogContent>
                               <DialogContentText id="alert-dialog-description">
-                                Ele não aparecerá mas na lista.
+                                Este item não aparecerá mas na lista.
                               </DialogContentText>
                             </DialogContent>
                             <DialogActions>
@@ -392,61 +406,18 @@ function EnhancedTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          labelDisplayedRows={(from=page) => (`${from.from}-${from.to === -1 ? from.count : from.to} de ${from.count}`)}
         />
       </Paper>
     </div>
   );
 }
 
-function  CustomerList() {
-  const modelBase = '/clientes'
-  const props = {tableName:"Clientes", modelBase:modelBase, rows:["id", "nomeFantasia", "cnpj"]}
+const BaseTable = ({tableName, modelBase, rows}) => {
   return (
     <>
-      <Helmet title="Produtos" />
-      <>
-        <Grid justifyContent="space-between" container spacing={10}>
-        <Grid item>
-          <Typography variant="h3" gutterBottom display="inline">
-            Clientes
-          </Typography>
-
-          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-            <NextLink href="/" passHref>
-              <Link>Nome 1</Link>
-            </NextLink>
-            <NextLink href="/" passHref>
-              <Link>Nome 2</Link>
-            </NextLink>
-            <Typography>Lista de Clientes</Typography>
-          </Breadcrumbs>
-
-        </Grid>
-        <Grid item>
-          <NextLink href="/forms/customerForm" passHref>
-              <Link><Button variant="contained" color="primary" >
-                <AddIcon />
-                Criar Cliente
-              </Button></Link>
-          </NextLink>
-        </Grid>
-        </Grid>
-
-        <Divider my={6} />
-
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <BaseTable {...props}/> 
-          </Grid>
-        </Grid>
-      </>
+        {EnhancedTable(tableName, modelBase, rows)} 
     </>
   );
 }
 
- CustomerList.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
-
-export default  CustomerList;
+export default BaseTable;

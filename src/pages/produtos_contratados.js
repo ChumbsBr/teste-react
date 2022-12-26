@@ -175,7 +175,8 @@ function EnhancedTable() {
   const { url } = React.useContext(AuthContext);
   const [tableData, setTableData] = useState([])
   useEffect(()=>{
-    fetch( url + "/produtosContratados")
+    // fetch( url + '/produtosContratados")
+    fetch( "https://localhost:7228/produtos/" )
     .then(res=>res.json())
     .then((data=>{
       console.log(data)
@@ -359,7 +360,7 @@ function EnhancedTable() {
 const fakeData = {Descricao: "Produto adicionado"}
 
 function CreateContractedProduct(){
-  fetch(  url + "/produtos", {
+  fetch(  "https://localhost:7228/produtos/" , {
     method: 'POST',
     body: JSON.stringify(fakeData),
     headers: {
