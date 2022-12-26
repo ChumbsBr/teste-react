@@ -7,7 +7,7 @@ export const CreateData = (url, data) =>{
       'Content-type': 'application/json; charset=UTF-8',
     },
   })
-  .then((response) => response.json())
+  .then((response) => console.log(url) )
   .then((json) => console.log(json));
 }
 

@@ -25,6 +25,7 @@ import { spacing } from "@mui/system";
 import DashboardLayout from "../../layouts/Dashboard";
 
 import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import { AuthContext } from "../../contexts/JWTContext";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -39,9 +40,6 @@ const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
 
 let initialValues = {}
-
-const BASEURL = "https://localhost:7228"
-const url = BASEURL+"/clientes"
 
 function ValidacaoNomeFantasia(formValues){
     if(!formValues.nomeFantasia){
@@ -64,7 +62,8 @@ function ValidacaoCnpj(formValues){
       }
 }
 
-function BasicForm() {  
+function BasicForm() { 
+  const { url } = React.useContext(AuthContext)  
   const [formValues, setFormValues] = useState({});
   const navigate = useNavigate();
 
@@ -85,7 +84,7 @@ function BasicForm() {
     const data = Object.fromEntries(formData);
 
     if(errorResponse.campoNomeFantasia == undefined && errorResponse.campoCnpj == undefined){
-        CreateData(url, data);
+        CreateData(url + 'clientes', data);
         navigate(-1); // solução provisória
     }
 

@@ -42,9 +42,6 @@ const Button = styled(MuiButton)(spacing);
 
 let initialValues = {}
 
-const { url } = React.useContext(AuthContext);
-
-const urlbase = url +"/produtos"
 
 function BasicForm() {  
   const { url } = React.useContext(AuthContext);
@@ -77,7 +74,7 @@ function BasicForm() {
     const data = Object.fromEntries(formData);
 
     if(errorResponse == undefined){
-      CreateData(urlBase, data);
+      CreateData(url + "/produtos", data);
       navigate(-1); // solução provisória
       // navigate("/produtos", {replace: true});
     }

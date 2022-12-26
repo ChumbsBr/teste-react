@@ -6,6 +6,7 @@ import { Box, CssBaseline, Paper as MuiPaper } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { spacing } from "@mui/system";
+import { ptBR } from '@mui/material/locale';
 
 import GlobalStyle from "../components/GlobalStyle";
 import Navbar from "../components/navbar/Navbar";
@@ -59,7 +60,7 @@ const Dashboard = ({ children }) => {
 
   const theme = useTheme();
   const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
-
+  
   return (
     <Root>
       <CssBaseline />

@@ -84,8 +84,9 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: "id", alignment: "left", label: "ID" },
-  { id: "descricao", alignment: "left", label: "Descrição" },
-  {},
+  { id: "cliente", alignment: "left", label: "Cliente" },
+  { id: "produto", alignment: "left", label: "Produto"},
+  {}
 ];
 
 const EnhancedTableHead = (props) => {
@@ -306,7 +307,9 @@ function EnhancedTable() {
                       </TableCell>
 
                       <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="left">{row.descricao}</TableCell>
+                      <TableCell align="left">{row.cliente}</TableCell>
+                      <TableCell align="left">{row.produto}</TableCell>
+                      
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           {/* passar ID do produto */}

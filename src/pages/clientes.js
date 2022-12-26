@@ -55,6 +55,17 @@ const Divider = styled(MuiDivider)(spacing);
 
 const Paper = styled(MuiPaper)(spacing);
 
+const cnpjMask = (value) => {
+  console.log(value)
+  return value
+    .replace(/\D+/g, '') // não deixa ser digitado nenhuma letra
+    .replace(/(\d{2})(\d)/, '$1.$2') // captura 2 grupos de número o primeiro com 2 digitos e o segundo de com 3 digitos, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de número
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2') // captura 2 grupos de número o primeiro e o segundo com 3 digitos, separados por /
+    .replace(/(\d{4})(\d)/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1') // captura os dois últimos 2 números, com um - antes dos dois números
+}
+
 const Spacer = styled.div`
   flex: 1 1 100%;
 `;
@@ -157,7 +168,7 @@ const EnhancedTableToolbar = (props) => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            Lista de Produtos
+            Lista de Clientes
           </Typography>
         )}
       </ToolbarTitle>
@@ -170,7 +181,7 @@ const EnhancedTableToolbar = (props) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Filter list">
+          <Tooltip title=" Filtrar Lista">
             <IconButton aria-label="Filter list" size="large">
               <FilterListIcon />
             </IconButton>
@@ -322,7 +333,7 @@ function EnhancedTable() {
 
                       <TableCell align="left">{row.id}</TableCell>
                       <TableCell align="left">{row.nomeFantasia}</TableCell>
-                      <TableCell align="left">{row.cnpj}</TableCell>
+                      <TableCell align="left">{cnpjMask(row.cnpj)}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           <NextLink href="/forms/productForm/" passHref>
@@ -411,6 +422,7 @@ function EnhancedTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelDisplayedRows={(from=page) => (`${from.from}-${from.to === -1 ? from.count : from.to} de ${from.count}`)}
         />
       </Paper>
     </div>
