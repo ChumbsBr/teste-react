@@ -4,6 +4,8 @@ import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
 import BaseTable from "./tables/base-table"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   Breadcrumbs as MuiBreadcrumbs,
@@ -18,6 +20,25 @@ import {
   Add as AddIcon,
 } from "@mui/icons-material";
 import { spacing } from "@mui/system";
+
+export let message = true;
+function changeMessage(){
+  message = false;
+}
+function notifyReturn(){
+  console.log("*****ENTROU NA FUNCAO!*****")
+  toast.success(`Item criado!`,{
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+  });
+  message = true;
+}
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
@@ -49,7 +70,7 @@ function ProductList() {
         </Grid>
         <Grid item>
           <NextLink href="/forms/productForm" passHref>
-              <Link><Button variant="contained" color="primary" >
+              <Link><Button variant="contained" color="primary" onClick = {changeMessage}>
                 <AddIcon />
                 Criar Produto
               </Button></Link>
@@ -65,6 +86,9 @@ function ProductList() {
           </Grid>
         </Grid>
       </>
+      {message == false &&
+        notifyReturn()      
+      }
     </>
   );
 }

@@ -37,6 +37,8 @@ import { spacing } from "@mui/system";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const newData = {Descricao: "Produto atualizado"}
 
@@ -50,6 +52,29 @@ const Spacer = styled.div`
 const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
+
+const cnpjMask = (value) => {
+  return value
+    .replace(/\D+/g, '') // não deixa ser digitado nenhuma letra
+    .replace(/(\d{2})(\d)/, '$1.$2') // captura 2 grupos de número o primeiro com 2 digitos e o segundo de com 3 digitos, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de número
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2') // captura 2 grupos de número o primeiro e o segundo com 3 digitos, separados por /
+    .replace(/(\d{4})(\d)/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1') // captura os dois últimos 2 números, com um - antes dos dois números
+}
+
+function notifyReturn(id){
+  toast.warn(`Item ${id} deletado!`,{
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+  });
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -249,7 +274,6 @@ function EnhancedTable(tableName, modelBase, rows) {
     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
 
   const [open, setOpen] = React.useState(false);
-  const [openConfirm, setOpenConfirm] = React.useState(false);
 
   const [itemId, setitemId] = React.useState();
 
@@ -258,17 +282,10 @@ function EnhancedTable(tableName, modelBase, rows) {
     setitemId(itemId);
   };
 
-  function handleClickOpenConfirm(){
-    setOpenConfirm(true);
-  };
-
-  function handleCloseConfirm(){
-    return setOpenConfirm(false);
-  };
-
   function handleClose(){
     return setOpen(false);
   };
+
 
   return (
     <div>
@@ -315,6 +332,9 @@ function EnhancedTable(tableName, modelBase, rows) {
 
                         {rows.map((oneRow)=>{
                             oneRow = oneRow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                            if(oneRow == 'cnpj'){
+                              row[oneRow] = cnpjMask(row[oneRow])
+                            }
                             return(<TableCell align="left">{row[oneRow]}</TableCell> )
                         })}
 
@@ -358,30 +378,11 @@ function EnhancedTable(tableName, modelBase, rows) {
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, itemId); refreshComponent();}}color="primary" autoFocus>
-                                Sim
-                              </Button>
-                            </DialogActions>
-                          </Dialog>
-
-                          <Dialog
-                            open={openConfirm}
-                            onClose={handleCloseConfirm}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                          >
-                            <DialogTitle id="alert-dialog-title">
-                              {`Item ${itemId} deletado`}
-                            </DialogTitle>
-                            <DialogContent>
-                              <DialogContentText id="alert-dialog-description">
-                                Este item não aparecerá mas na lista.
-                              </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleCloseConfirm} color="primary">
-                                Ok
-                              </Button>
+                              <div>
+                                <Button onClick={ () => {notifyReturn(itemId); handleClose(); DeleteData(urlBase, itemId); refreshComponent()} } color="primary" autoFocus>
+                                  Sim
+                                </Button>
+                              </div>
                             </DialogActions>
                           </Dialog>
 
@@ -412,10 +413,12 @@ function EnhancedTable(tableName, modelBase, rows) {
   );
 }
 
+// props: Nome da Tabela, link final da tabela, colunas da tabela
 const BaseTable = ({tableName, modelBase, rows}) => {
   return (
     <>
-        {EnhancedTable(tableName, modelBase, rows)} 
+        {EnhancedTable(tableName, modelBase, rows)}
+        <ToastContainer /> 
     </>
   );
 }

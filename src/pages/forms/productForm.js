@@ -7,7 +7,6 @@ import { Helmet } from "react-helmet-async";
 import { CreateData } from "../../functions/crud";
 import { AuthContext } from "../../contexts/JWTContext";
 
-
 import {
   Alert as MuiAlert,
   Box,
@@ -42,7 +41,6 @@ const Button = styled(MuiButton)(spacing);
 
 let initialValues = {}
 
-
 function BasicForm() {  
   const { url } = React.useContext(AuthContext);
   const [formValues, setFormValues] = useState({});
@@ -53,8 +51,6 @@ function BasicForm() {
 
     setFormValues({ ...formValues, [name]: value });
   }
-
-  console.log(formValues.descricao)
 
   let errorResponse = undefined
 
@@ -147,33 +143,35 @@ function BasicForm() {
   );
 }
 
-function FormikPage() {
+function FormPage() {
   return (
     <>
+      <>
       <Helmet title="Criar Produto" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Criação do Produto
-      </Typography>
+        <Typography variant="h3" gutterBottom display="inline">
+          Criação do Produto
+        </Typography>
 
-          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-              <NextLink href="/" passHref>
-                <Link>Nome 1</Link>
-              </NextLink>
-              <NextLink href="/produtos" passHref>
-                <Link>Lista de Produtos</Link>
-              </NextLink>
-              <Typography>Criar Produto</Typography>
-          </Breadcrumbs>
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+                <NextLink href="/" passHref>
+                  <Link>Nome 1</Link>
+                </NextLink>
+                <NextLink href="/produtos" passHref>
+                  <Link>Lista de Produtos</Link>
+                </NextLink>
+                <Typography>Criar Produto</Typography>
+            </Breadcrumbs>
 
-      <Divider my={6} />
+        <Divider my={6} />
 
-      <Router><BasicForm /></Router>
+        <Router><BasicForm /></Router>
+    </>
     </>
   );
 }
 
-FormikPage.getLayout = function getLayout(page) {
+FormPage.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default FormikPage;
+export default FormPage;

@@ -84,7 +84,7 @@ function BasicForm() {
     const data = Object.fromEntries(formData);
 
     if(errorResponse.campoNomeFantasia == undefined && errorResponse.campoCnpj == undefined){
-        CreateData(url + 'clientes', data);
+        CreateData(url + '/clientes', data);
         navigate(-1); // solução provisória
     }
 
@@ -97,7 +97,7 @@ function BasicForm() {
 
   let temp = initialValues
   initialValues = {}
-  console.log(validationSchema)
+  
   return (
       <Formik
       initialValues={temp}
