@@ -9,10 +9,12 @@ export const CreateData = (url, data) =>{
   })
   .then((response) => console.log(url) )
   .then((json) => console.log(json));
+  console.log(data)
 }
 
 export const DeleteData = (url, dataId) =>{
     url = `${url}/${dataId}`
+    console.log(url, dataId)
     fetch(url, {
       method: 'DELETE',
     })

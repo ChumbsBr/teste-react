@@ -139,6 +139,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
+                    </Grid>
+                    <Grid item md={6}>
                     <TextField
                       name="cnpj"
                       label="CNPJ"

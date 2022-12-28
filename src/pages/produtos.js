@@ -21,11 +21,14 @@ import {
 } from "@mui/icons-material";
 import { spacing } from "@mui/system";
 
-export let message = true;
+let message = true;
+
 function changeMessage(){
   message = false;
 }
 function notifyReturn(){
+  // toast.success(`Item criado!`);
+  message = true
   console.log("*****ENTROU NA FUNCAO!*****")
   toast.success(`Item criado!`,{
     position: "top-right",
@@ -36,8 +39,8 @@ function notifyReturn(){
     draggable: true,
     progress: undefined,
     theme: "dark",
+    pauseOnFocusLoss: false,
   });
-  message = true;
 }
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
@@ -70,7 +73,7 @@ function ProductList() {
         </Grid>
         <Grid item>
           <NextLink href="/forms/productForm" passHref>
-              <Link><Button variant="contained" color="primary" onClick = {changeMessage}>
+              <Link><Button variant="contained" color="primary" onClick={changeMessage}>
                 <AddIcon />
                 Criar Produto
               </Button></Link>
@@ -87,7 +90,7 @@ function ProductList() {
         </Grid>
       </>
       {message == false &&
-        notifyReturn()      
+        notifyReturn()
       }
     </>
   );

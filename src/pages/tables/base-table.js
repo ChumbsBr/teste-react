@@ -73,6 +73,7 @@ function notifyReturn(id){
     draggable: true,
     progress: undefined,
     theme: "dark",
+    pauseOnFocusLoss: false,
   });
 }
 
