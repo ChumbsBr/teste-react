@@ -70,10 +70,7 @@ const Sidebar = ({ items, showFooter = true, ...rest }) => {
     <Drawer variant="permanent" {...rest}>
       <Link href="/">
         <Brand>
-          <BrandIcon />{" "}
-          <Box ml={1}>
-            JD System
-          </Box>
+          <BrandIcon /> <Box ml={1}>JD System</Box>
         </Brand>
       </Link>
       <SidebarNav items={items} />

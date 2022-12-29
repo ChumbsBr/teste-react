@@ -17,10 +17,11 @@ const Divider = styled(MuiDivider)(spacing);
 
 const Typography = styled(MuiTypography)(spacing);
 
-
 function Analytics() {
   const { t } = useTranslation();
-  {console.log(process.env.URL)}
+  {
+    console.log(process.env.URL);
+  }
   return (
     <React.Fragment>
       <Helmet title="Página Inicial" />

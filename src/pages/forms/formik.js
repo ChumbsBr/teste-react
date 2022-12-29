@@ -215,7 +215,7 @@ function FormikPage() {
       <Typography variant="h3" gutterBottom display="inline">
         Formik
       </Typography> */}
-      
+
       {/* <Divider my={6} /> */}
 
       <BasicForm />

@@ -54,7 +54,7 @@ const JWTReducer = (state, action) => {
 const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(JWTReducer, initialState);  
+  const [state, dispatch] = useReducer(JWTReducer, initialState);
   const url = "https://localhost:7228";
   useEffect(() => {
     const initialize = async () => {
@@ -103,9 +103,9 @@ function AuthProvider({ children }) {
       login,
       senha,
     });
-    const {token, user} = response.data;
+    const { token, user } = response.data;
     setSession(token);
-    AuthContext.user = user;  
+    AuthContext.user = user;
     console.log(AuthContext);
     dispatch({
       type: SIGN_IN,
@@ -149,7 +149,7 @@ function AuthProvider({ children }) {
         signOut,
         signUp,
         resetPassword,
-        url
+        url,
       }}
     >
       {children}

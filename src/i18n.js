@@ -31,8 +31,8 @@ const resources = {
     },
   },
   pt: {
-    translation:{
-      Search: "Pesquisar"
+    translation: {
+      Search: "Pesquisar",
     },
   },
 };

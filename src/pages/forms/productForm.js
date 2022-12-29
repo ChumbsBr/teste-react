@@ -25,7 +25,7 @@ import { spacing } from "@mui/system";
 
 import DashboardLayout from "../../layouts/Dashboard";
 
-import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -39,9 +39,9 @@ const TextField = styled(MuiTextField)(spacing);
 
 const Button = styled(MuiButton)(spacing);
 
-let initialValues = {}
+let initialValues = {};
 
-function BasicForm() {  
+function BasicForm() {
   const { url } = React.useContext(AuthContext);
   const [formValues, setFormValues] = useState({});
   const navigate = useNavigate();
@@ -50,18 +50,16 @@ function BasicForm() {
     const { name, value } = e.target;
 
     setFormValues({ ...formValues, [name]: value });
-  }
+  };
 
-  let errorResponse = undefined
+  let errorResponse = undefined;
 
-  if(!formValues.descricao){
-    errorResponse = Yup.string().required("Campo obrigatório")
-  }
-  else if(formValues.descricao.length <= 1){
-    errorResponse = Yup.string().required("Descrição muito curta")
-  }
-  else{
-    errorResponse = undefined
+  if (!formValues.descricao) {
+    errorResponse = Yup.string().required("Campo obrigatório");
+  } else if (formValues.descricao.length <= 1) {
+    errorResponse = Yup.string().required("Descrição muito curta");
+  } else {
+    errorResponse = undefined;
   }
 
   const handleSubmit = (e) => {
@@ -69,49 +67,40 @@ function BasicForm() {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
 
-    if(errorResponse == undefined){
+    if (errorResponse == undefined) {
       CreateData(url + "/produtos", data);
       navigate(-1); // solução provisória
       // navigate("/produtos", {replace: true});
     }
-
-  }  
+  };
 
   const validationSchema = Yup.object().shape({
     descricao: errorResponse,
   });
 
-  let temp = initialValues
-  initialValues = {}
+  let temp = initialValues;
+  initialValues = {};
 
   return (
-      <Formik
+    <Formik
       initialValues={temp}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({
-        errors,
-        handleBlur,
-        isSubmitting,
-        touched,
-        values,
-        status,
-      }) => (
+      {({ errors, handleBlur, isSubmitting, touched, values, status }) => (
         <Card mb={6}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Novo Produto
             </Typography>
-            
 
             {isSubmitting ? (
               <Box display="flex" justifyContent="center" my={6}>
                 <CircularProgress />
               </Box>
             ) : (
-              <form onSubmit={handleSubmit} >
-                <Grid container spacing={6} >
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={6}>
                   <Grid item md={6}>
                     <TextField
                       name="descricao"
@@ -129,17 +118,21 @@ function BasicForm() {
                 </Grid>
 
                 <Box display="flex" justifyContent="right">
-                  <Button type="submit" variant="contained" color="primary" mt={3} >
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    mt={3}
+                  >
                     Salvar alterações
                   </Button>
                 </Box>
-                
               </form>
             )}
           </CardContent>
         </Card>
       )}
-      </Formik>
+    </Formik>
   );
 }
 
@@ -147,25 +140,27 @@ function FormPage() {
   return (
     <>
       <>
-      <Helmet title="Criar Produto" />
+        <Helmet title="Criar Produto" />
         <Typography variant="h3" gutterBottom display="inline">
           Criação do Produto
         </Typography>
 
-            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-                <NextLink href="/" passHref>
-                  <Link>Nome 1</Link>
-                </NextLink>
-                <NextLink href="/produtos" passHref>
-                  <Link>Lista de Produtos</Link>
-                </NextLink>
-                <Typography>Criar Produto</Typography>
-            </Breadcrumbs>
+        <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+          <NextLink href="/" passHref>
+            <Link>Nome 1</Link>
+          </NextLink>
+          <NextLink href="/produtos" passHref>
+            <Link>Lista de Produtos</Link>
+          </NextLink>
+          <Typography>Criar Produto</Typography>
+        </Breadcrumbs>
 
         <Divider my={6} />
 
-        <Router><BasicForm /></Router>
-    </>
+        <Router>
+          <BasicForm />
+        </Router>
+      </>
     </>
   );
 }

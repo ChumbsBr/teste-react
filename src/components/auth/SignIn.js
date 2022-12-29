@@ -32,10 +32,8 @@ function SignIn() {
         submit: false,
       }}
       validationSchema={Yup.object().shape({
-        login: Yup.string()
-          .max(255)
-          .required("Login is required"),
-          senha: Yup.string().max(255).required("Senha is required"),
+        login: Yup.string().max(255).required("Login is required"),
+        senha: Yup.string().max(255).required("Senha is required"),
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
@@ -59,7 +57,7 @@ function SignIn() {
         touched,
         values,
       }) => (
-        <form noValidate onSubmit={handleSubmit}>         
+        <form noValidate onSubmit={handleSubmit}>
           {errors.submit && (
             <Alert mt={2} mb={3} severity="warning">
               {errors.submit}

@@ -21,15 +21,13 @@ import {
   Typography,
 } from "@mui/material";
 
-import {
-    DatePicker
-  } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 
 import { spacing } from "@mui/system";
 
 import DashboardLayout from "../../layouts/Dashboard";
 
-import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/JWTContext";
 import format from "date-fns/format";
 
@@ -45,10 +43,10 @@ const TextField = styled(MuiTextField)(spacing);
 
 const Button = styled(MuiButton)(spacing);
 
-let initialValues = {}
+let initialValues = {};
 
 const params = {
-  "name": "DataRegistro",
+  name: "DataRegistro",
   // "value":{values.DataRegistro},
   // error={Boolean(touched.cnpj && errors.cnpj)},
   // fullWidth,
@@ -57,37 +55,33 @@ const params = {
   // onChange={handleChange},
   // variant="outlined",
   // my={2},
+};
+
+function ValidacaoNomeFantasia(formValues) {
+  if (!formValues.nomeFantasia) {
+    return Yup.string().required("Campo obrigatório");
+  } else if (formValues.nomeFantasia && formValues.nomeFantasia.length <= 2) {
+    return Yup.string().required("Descrição muito curta");
+  } else {
+    return undefined;
+  }
 }
 
-function ValidacaoNomeFantasia(formValues){
-    if(!formValues.nomeFantasia){
-        return Yup.string().required("Campo obrigatório")
-      }
-      else if(formValues.nomeFantasia && formValues.nomeFantasia.length <= 2){
-        return Yup.string().required("Descrição muito curta")
-      }
-      else{
-        return undefined
-      }
+function ValidacaoCnpj(formValues) {
+  if (!formValues.cnpj) {
+    return Yup.string().required("Campo obrigatório");
+  } else {
+    return undefined;
+  }
 }
 
-function ValidacaoCnpj(formValues){
-    if(!formValues.cnpj){
-        return Yup.string().required("Campo obrigatório")
-      }
-      else{    
-        return undefined
-      }
-}
-
-function BasicForm() { 
-  const { url } = React.useContext(AuthContext)  
+function BasicForm() {
+  const { url } = React.useContext(AuthContext);
   const [formValues, setFormValues] = useState({});
   const navigate = useNavigate();
   const [dateValue, setDateValue] = React.useState(null);
-  const [formattedDate, setFormattedDate] = useState(null)
+  const [formattedDate, setFormattedDate] = useState(null);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
@@ -96,21 +90,31 @@ function BasicForm() {
     // var day = dateValue.getUTCDate();
     // var year = dateValue.getUTCFullYear();
 
-    setFormattedDate(format(dateValue, 'dd/MM/yyyy'))
-    console.log(formattedDate)
+    setFormattedDate(format(dateValue, "dd/MM/yyyy"));
+    console.log(formattedDate);
 
     // setDateValue(`${day}/${month}/${year}`)
 
-    if(dateValue != null){
-      setFormValues({ ...formValues, ["DataRegistro"]: formattedDate })
+    if (dateValue != null) {
+      setFormValues({ ...formValues, ["DataRegistro"]: formattedDate });
     }
-    console.log(formValues)
-  }
+    console.log(formValues);
+  };
 
-  let errorResponse = {"campoClienteId": undefined, "campoDescricao": undefined, "campoDataRegistro": undefined, "campoProdutoI": undefined, "campoServer": undefined, "campoServerBanco": undefined, "campoBanco": undefined, "campoUsuario": undefined, "campoPsw": undefined}
+  let errorResponse = {
+    campoClienteId: undefined,
+    campoDescricao: undefined,
+    campoDataRegistro: undefined,
+    campoProdutoI: undefined,
+    campoServer: undefined,
+    campoServerBanco: undefined,
+    campoBanco: undefined,
+    campoUsuario: undefined,
+    campoPsw: undefined,
+  };
 
-  errorResponse.campoNomeFantasia = ValidacaoNomeFantasia(formValues)
-  errorResponse.campoCnpj = ValidacaoCnpj(formValues)
+  errorResponse.campoNomeFantasia = ValidacaoNomeFantasia(formValues);
+  errorResponse.campoCnpj = ValidacaoCnpj(formValues);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -121,19 +125,18 @@ function BasicForm() {
     // var day = dateValue.getUTCDate();
     // var year = dateValue.getUTCFullYear();
     // console.log(day, month, year)
-    
+
     // const formatedDate = `${day}/${month}/${year}`
     // data['DataRegistro'] = formatedDate
     // console.log(dateValue)
 
     // if(errorResponse.campoNomeFantasia == undefined && errorResponse.campoCnpj == undefined){
-    CreateData(url + '/produtosContratados', data);
+    CreateData(url + "/produtosContratados", data);
     navigate(-1); // solução provisória
     // }
-
-  }  
-  const cellSize = 6
-  const cellHeight = 2
+  };
+  const cellSize = 6;
+  const cellHeight = 2;
 
   const validationSchema = Yup.object().shape({
     ClienteId: errorResponse.campoClienteId,
@@ -144,40 +147,32 @@ function BasicForm() {
     ServerBanco: errorResponse.ServerBanco,
     Banco: errorResponse.campoBanco,
     Usuario: errorResponse.campoUsuario,
-    Psw: errorResponse.campoPsw
+    Psw: errorResponse.campoPsw,
   });
 
-  let temp = initialValues
-  initialValues = {}
+  let temp = initialValues;
+  initialValues = {};
 
   return (
-      <Formik
+    <Formik
       initialValues={temp}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({
-        errors,
-        handleBlur,
-        isSubmitting,
-        touched,
-        values,
-        status,
-      }) => (
+      {({ errors, handleBlur, isSubmitting, touched, values, status }) => (
         <Card mb={6}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Novo Produto Contratado
             </Typography>
-            
 
             {isSubmitting ? (
               <Box display="flex" justifyContent="center" my={6}>
                 <CircularProgress />
               </Box>
             ) : (
-              <form onSubmit={handleSubmit} >
-                <Grid container spacing={6} >
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={6}>
                   <Grid item md={cellSize} my={cellHeight}>
                     <TextField
                       name="Cliente_Id"
@@ -229,16 +224,16 @@ function BasicForm() {
                         }
                     /> */}
                     <DatePicker
-                        // views={['day', 'month', 'year']}
-                        label="Data de Registros"
-                        value={dateValue}
-                        // onChange={handleChange}
-                        onChange={(newValue) => {
-                          // format(newValue, 'dd/MM/yyyy')
-                          setDateValue(newValue);
-                        }}
-                        // format(dateValue, 'dd/MM/yyyy')
-                        renderInput={(params) => <TextField {...params} />}
+                      // views={['day', 'month', 'year']}
+                      label="Data de Registros"
+                      value={dateValue}
+                      // onChange={handleChange}
+                      onChange={(newValue) => {
+                        // format(newValue, 'dd/MM/yyyy')
+                        setDateValue(newValue);
+                      }}
+                      // format(dateValue, 'dd/MM/yyyy')
+                      renderInput={(params) => <TextField {...params} />}
                     />
                   </Grid>
                   <Grid item md={6}>
@@ -254,8 +249,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-                    <Grid item md={6}>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextField
                       name="Server"
                       label="Server"
@@ -268,8 +263,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-                    <Grid item md={6}>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextField
                       name="ServerBanco"
                       label="Server Banco"
@@ -282,8 +277,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-                    <Grid item md={6}>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextField
                       name="Banco"
                       label="Banco"
@@ -296,8 +291,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-                    <Grid item md={6}>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextField
                       name="Usuario"
                       label="Usuário"
@@ -310,8 +305,8 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-                    <Grid item md={6}>
+                  </Grid>
+                  <Grid item md={6}>
                     <TextField
                       name="PSW"
                       label="Psw"
@@ -324,22 +319,25 @@ function BasicForm() {
                       variant="outlined"
                       my={2}
                     />
-                    </Grid>
-
                   </Grid>
+                </Grid>
 
                 <Box display="flex" justifyContent="right">
-                  <Button type="submit" variant="contained" color="primary" mt={3} >
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    mt={3}
+                  >
                     Salvar alterações
                   </Button>
                 </Box>
-                
               </form>
             )}
           </CardContent>
         </Card>
       )}
-      </Formik>
+    </Formik>
   );
 }
 
@@ -351,19 +349,21 @@ function FormikPage() {
         Criação do Produto Contratado
       </Typography>
 
-          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-              <NextLink href="/" passHref>
-                <Link>Nome 1</Link>
-              </NextLink>
-              <NextLink href="/produtos_contratados" passHref>
-                <Link>Lista de Produtos Contratados</Link>
-              </NextLink>
-              <Typography>Criar Produto Contratado</Typography>
-          </Breadcrumbs>
+      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+        <NextLink href="/" passHref>
+          <Link>Nome 1</Link>
+        </NextLink>
+        <NextLink href="/produtos_contratados" passHref>
+          <Link>Lista de Produtos Contratados</Link>
+        </NextLink>
+        <Typography>Criar Produto Contratado</Typography>
+      </Breadcrumbs>
 
       <Divider my={6} />
 
-      <Router><BasicForm /></Router>
+      <Router>
+        <BasicForm />
+      </Router>
     </>
   );
 }
