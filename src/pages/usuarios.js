@@ -42,21 +42,20 @@ import {
   RemoveRedEye as RemoveRedEyeIcon,
 } from "@mui/icons-material";
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { spacing } from "@mui/system";
 
 import DashboardLayout from "../layouts/Dashboard";
 
-const newData = {Descricao: "Usuário atualizado"}
+const newData = { Descricao: "Usuário atualizado" };
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
 const Paper = styled(MuiPaper)(spacing);
-
 
 const Spacer = styled.div`
   flex: 1 1 100%;
@@ -97,11 +96,10 @@ function stableSort(array, comparator) {
 
 const headCells = [
   { id: "nome", alignment: "left", label: "Nome" },
-  { id: "permissao", alignment: "left", label: "Permissão"},
-  { id: "ativo", alignment: "left", label: "Status"},
-  {}
+  { id: "permissao", alignment: "left", label: "Permissão" },
+  { id: "ativo", alignment: "left", label: "Status" },
+  {},
 ];
-
 
 const EnhancedTableHead = (props) => {
   const {
@@ -187,24 +185,24 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable() {
   const { url } = React.useContext(AuthContext);
-  const urlBase = url + '/usuarios'
-  const [tableData, setTableData] = useState([])
-  const [updateTable, setupdateTable] = useState(true)
+  const urlBase = url + "/usuarios";
+  const [tableData, setTableData] = useState([]);
+  const [updateTable, setupdateTable] = useState(true);
 
-  function refreshComponent(){
-    setupdateTable(true)
+  function refreshComponent() {
+    setupdateTable(true);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(urlBase)
-    .then(res=>res.json())
-    .then((data=>{
-      setupdateTable(false)
-      setTableData(data)
-      console.log(data);
-    }))
-    .catch((err) => console.log(err))
-  }, [updateTable])
+      .then((res) => res.json())
+      .then((data) => {
+        setupdateTable(false);
+        setTableData(data);
+        console.log(data);
+      })
+      .catch((err) => console.log(err));
+  }, [updateTable]);
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
@@ -247,7 +245,7 @@ function EnhancedTable() {
     setSelected(newSelected);
   };
 
-  const permissoes = ["", "Gerencial"]
+  const permissoes = ["", "Gerencial"];
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -268,22 +266,22 @@ function EnhancedTable() {
 
   const [idUser, setIdUser] = React.useState();
 
-  function handleClickOpen(idUser){
+  function handleClickOpen(idUser) {
     setOpen(true);
     setIdUser(idUser);
-  };
+  }
 
-  function handleClickOpenConfirm(){
+  function handleClickOpenConfirm() {
     setOpenConfirm(true);
-  };
+  }
 
-  function handleCloseConfirm(){
+  function handleCloseConfirm() {
     return setOpenConfirm(false);
-  };
+  }
 
-  function handleClose(){
+  function handleClose() {
     return setOpen(false);
-  };
+  }
 
   return (
     <div>
@@ -328,25 +326,43 @@ function EnhancedTable() {
                       </TableCell>
 
                       <TableCell align="left">{row.nome}</TableCell>
-                      <TableCell align="left">{permissoes[row.permissao]}</TableCell>
-                      <TableCell align="left">{row.ativo ? "Ativo": "Inativo"}</TableCell>
+                      <TableCell align="left">
+                        {permissoes[row.permissao]}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.ativo ? "Ativo" : "Inativo"}
+                      </TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           <NextLink href="/forms/userForm/" passHref>
                             <Link>
-                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(urlBase, row.id, newData)}>
-                              <EditIcon />
+                              <IconButton
+                                aria-label="edit"
+                                size="large"
+                                onClick={() =>
+                                  UpdateData(urlBase, row.id, newData)
+                                }
+                              >
+                                <EditIcon />
                               </IconButton>
                             </Link>
                           </NextLink>
-                        
-                          <NextLink href="/invoices/detail" passHref> 
-                            <Link><IconButton aria-label="details" size="large">
-                              <RemoveRedEyeIcon />
-                            </IconButton></Link>
+
+                          <NextLink href="/invoices/detail" passHref>
+                            <Link>
+                              <IconButton aria-label="details" size="large">
+                                <RemoveRedEyeIcon />
+                              </IconButton>
+                            </Link>
                           </NextLink>
 
-                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            onClick={() => {
+                              handleClickOpen(row.id);
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
 
@@ -361,14 +377,24 @@ function EnhancedTable() {
                             </DialogTitle>
                             <DialogContent>
                               <DialogContentText id="alert-dialog-description">
-                                Você tem certeza que deseja deletar este usuário?
+                                Você tem certeza que deseja deletar este
+                                usuário?
                               </DialogContentText>
                             </DialogContent>
                             <DialogActions>
                               <Button onClick={handleClose} color="primary">
                                 Não
                               </Button>
-                              <Button onClick={()=>{handleClose(); handleClickOpenConfirm(); DeleteData(urlBase, idUser); refreshComponent();}}color="primary" autoFocus>
+                              <Button
+                                onClick={() => {
+                                  handleClose();
+                                  handleClickOpenConfirm();
+                                  DeleteData(urlBase, idUser);
+                                  refreshComponent();
+                                }}
+                                color="primary"
+                                autoFocus
+                              >
                                 Sim
                               </Button>
                             </DialogActions>
@@ -389,12 +415,14 @@ function EnhancedTable() {
                               </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                              <Button onClick={handleCloseConfirm} color="primary">
+                              <Button
+                                onClick={handleCloseConfirm}
+                                color="primary"
+                              >
                                 Ok
                               </Button>
                             </DialogActions>
                           </Dialog>
-
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -416,7 +444,7 @@ function EnhancedTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage='Registros por página:'
+          labelRowsPerPage="Registros por página:"
         />
       </Paper>
     </div>
@@ -424,43 +452,43 @@ function EnhancedTable() {
 }
 
 function UsersList() {
-  
   return (
     <>
       <Helmet title="Usuários" />
       <>
         <Grid justifyContent="space-between" container spacing={10}>
-        <Grid item>
-          <Typography variant="h3" gutterBottom display="inline">
-            Usuários
-          </Typography>
+          <Grid item>
+            <Typography variant="h3" gutterBottom display="inline">
+              Usuários
+            </Typography>
 
-          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-            <NextLink href="/" passHref>
-              <Link>Nome 1</Link>
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+              <NextLink href="/" passHref>
+                <Link>Nome 1</Link>
+              </NextLink>
+              <NextLink href="/" passHref>
+                <Link>Nome 2</Link>
+              </NextLink>
+              <Typography>Lista de Usuários</Typography>
+            </Breadcrumbs>
+          </Grid>
+          <Grid item>
+            <NextLink href="/forms/usersForm" passHref>
+              <Link>
+                <Button variant="contained" color="primary">
+                  <AddIcon />
+                  Criar Usuário
+                </Button>
+              </Link>
             </NextLink>
-            <NextLink href="/" passHref>
-              <Link>Nome 2</Link>
-            </NextLink>
-            <Typography>Lista de Usuários</Typography>
-          </Breadcrumbs>
-
-        </Grid>
-        <Grid item>
-          <NextLink href="/forms/usersForm" passHref>
-              <Link><Button variant="contained" color="primary" >
-                <AddIcon />
-                Criar Usuário
-              </Button></Link>
-          </NextLink>
-        </Grid>
+          </Grid>
         </Grid>
 
         <Divider my={6} />
 
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <EnhancedTable/> 
+            <EnhancedTable />
           </Grid>
         </Grid>
       </>

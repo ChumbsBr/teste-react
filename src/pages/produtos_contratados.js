@@ -239,7 +239,7 @@
 
 //   const emptyRows =
 //     rowsPerPage - Math.min(rowsPerPage, tableData.length - page * rowsPerPage);
-  
+
 //   function UpdateContractedProduct(contractedProductId){
 //     let url = url + `/${contractedProductId}`
 
@@ -310,7 +310,7 @@
 //                       <TableCell align="left">{row.id}</TableCell>
 //                       <TableCell align="left">{row.cliente}</TableCell>
 //                       <TableCell align="left">{row.produto}</TableCell>
-                      
+
 //                       <TableCell padding="none" align="right">
 //                         <Box mr={2}>
 //                           {/* passar ID do produto */}
@@ -319,7 +319,7 @@
 //                           </IconButton>
 
 //                           {/* passar ID do produto */}
-//                           <NextLink href="/invoices/detail" passHref> 
+//                           <NextLink href="/invoices/detail" passHref>
 //                             <IconButton aria-label="details" size="large">
 //                               <RemoveRedEyeIcon />
 //                             </IconButton>
@@ -373,7 +373,7 @@
 // }
 
 // function ProductList() {
-  
+
 //   return (
 //     <>
 //       <Helmet title="Produtos Contratados" />
@@ -398,7 +398,7 @@
 
 //       <Grid container spacing={6}>
 //         <Grid item xs={12}>
-//           <EnhancedTable/> 
+//           <EnhancedTable/>
 //         </Grid>
 //       </Grid>
 //     </>
@@ -416,7 +416,7 @@ import styled from "@emotion/styled";
 import NextLink from "next/link";
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "../layouts/Dashboard";
-import BaseTable from "./tables/base-table"
+import BaseTable from "./tables/base-table";
 
 import {
   Breadcrumbs as MuiBreadcrumbs,
@@ -427,54 +427,57 @@ import {
   Typography,
 } from "@mui/material";
 
-import {
-  Add as AddIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 import { spacing } from "@mui/system";
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
-function  CustomerList() {
-  const modelBase = '/produtosContratados'
-  const props = {tableName:"Produtos Contratados", modelBase:modelBase, rows:["id", "cliente", "produto"]}
+function CustomerList() {
+  const modelBase = "/produtosContratados";
+  const props = {
+    tableName: "Produtos Contratados",
+    modelBase: modelBase,
+    rows: ["id", "cliente", "produto"],
+  };
   return (
     <>
       <Helmet title="Produtos" />
       <>
         <Grid justifyContent="space-between" container spacing={10}>
-        <Grid item>
-          <Typography variant="h3" gutterBottom display="inline">
-            Produtos Contratados
-          </Typography>
+          <Grid item>
+            <Typography variant="h3" gutterBottom display="inline">
+              Produtos Contratados
+            </Typography>
 
-          <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-            <NextLink href="/" passHref>
-              <Link>Nome 1</Link>
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+              <NextLink href="/" passHref>
+                <Link>Nome 1</Link>
+              </NextLink>
+              <NextLink href="/" passHref>
+                <Link>Nome 2</Link>
+              </NextLink>
+              <Typography>Lista de Produtos Contratados</Typography>
+            </Breadcrumbs>
+          </Grid>
+          <Grid item>
+            <NextLink href="/forms/contractedProductForm" passHref>
+              <Link>
+                <Button variant="contained" color="primary">
+                  <AddIcon />
+                  Criar Produto Contratado
+                </Button>
+              </Link>
             </NextLink>
-            <NextLink href="/" passHref>
-              <Link>Nome 2</Link>
-            </NextLink>
-            <Typography>Lista de Produtos Contratados</Typography>
-          </Breadcrumbs>
-
-        </Grid>
-        <Grid item>
-          <NextLink href="/forms/contractedProductForm" passHref>
-              <Link><Button variant="contained" color="primary" >
-                <AddIcon />
-                Criar Produto Contratado
-              </Button></Link>
-          </NextLink>
-        </Grid>
+          </Grid>
         </Grid>
 
         <Divider my={6} />
 
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <BaseTable {...props}/> 
+            <BaseTable {...props} />
           </Grid>
         </Grid>
       </>
@@ -482,8 +485,8 @@ function  CustomerList() {
   );
 }
 
- CustomerList.getLayout = function getLayout(page) {
+CustomerList.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default  CustomerList;
+export default CustomerList;

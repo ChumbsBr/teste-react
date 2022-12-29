@@ -35,15 +35,14 @@ import {
 } from "@mui/icons-material";
 import { spacing } from "@mui/system";
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const newData = {Descricao: "Produto atualizado"}
+const newData = { Descricao: "Produto atualizado" };
 
 const Paper = styled(MuiPaper)(spacing);
-
 
 const Spacer = styled.div`
   flex: 1 1 100%;
@@ -55,16 +54,16 @@ const ToolbarTitle = styled.div`
 
 const cnpjMask = (value) => {
   return value
-    .replace(/\D+/g, '') // não deixa ser digitado nenhuma letra
-    .replace(/(\d{2})(\d)/, '$1.$2') // captura 2 grupos de número o primeiro com 2 digitos e o segundo de com 3 digitos, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de número
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1/$2') // captura 2 grupos de número o primeiro e o segundo com 3 digitos, separados por /
-    .replace(/(\d{4})(\d)/, '$1-$2')
-    .replace(/(-\d{2})\d+?$/, '$1') // captura os dois últimos 2 números, com um - antes dos dois números
-}
+    .replace(/\D+/g, "") // não deixa ser digitado nenhuma letra
+    .replace(/(\d{2})(\d)/, "$1.$2") // captura 2 grupos de número o primeiro com 2 digitos e o segundo de com 3 digitos, apos capturar o primeiro grupo ele adiciona um ponto antes do segundo grupo de número
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1/$2") // captura 2 grupos de número o primeiro e o segundo com 3 digitos, separados por /
+    .replace(/(\d{4})(\d)/, "$1-$2")
+    .replace(/(-\d{2})\d+?$/, "$1"); // captura os dois últimos 2 números, com um - antes dos dois números
+};
 
-function notifyReturn(id){
-  toast.warn(`Item ${id} deletado!`,{
+function notifyReturn(id) {
+  toast.warn(`Item ${id} deletado!`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -107,14 +106,16 @@ function stableSort(array, comparator) {
 }
 
 function headCells(rows) {
-    let headCells = []
-    rows.map((row) => {
-        let label = (row[0].toUpperCase()+row.substring(1)).replace(/([A-Z])/g, ' $1').trim()
-        headCells.push({id:row, alignment:"left", label:label})
-    })
-    headCells.push({})
-    return headCells;
-} 
+  let headCells = [];
+  rows.map((row) => {
+    let label = (row[0].toUpperCase() + row.substring(1))
+      .replace(/([A-Z])/g, " $1")
+      .trim();
+    headCells.push({ id: row, alignment: "left", label: label });
+  });
+  headCells.push({});
+  return headCells;
+}
 
 const EnhancedTableHead = (props) => {
   const {
@@ -124,7 +125,7 @@ const EnhancedTableHead = (props) => {
     numSelected,
     rowCount,
     onRequestSort,
-    heads
+    heads,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -201,23 +202,23 @@ const EnhancedTableToolbar = (props) => {
 
 function EnhancedTable(tableName, modelBase, rows) {
   const { url } = React.useContext(AuthContext);
-  const urlBase = url + modelBase
-  const [tableData, setTableData] = useState([])
-  const [updateTable, setupdateTable] = useState(true)
+  const urlBase = url + modelBase;
+  const [tableData, setTableData] = useState([]);
+  const [updateTable, setupdateTable] = useState(true);
 
-  function refreshComponent(){
-    setupdateTable(true)
+  function refreshComponent() {
+    setupdateTable(true);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(urlBase)
-    .then(res=>res.json())
-    .then((data=>{
-      setupdateTable(false)
-      setTableData(data)
-    }))
-    .catch((err) => console.log(err))
-  }, [updateTable])
+      .then((res) => res.json())
+      .then((data) => {
+        setupdateTable(false);
+        setTableData(data);
+      })
+      .catch((err) => console.log(err));
+  }, [updateTable]);
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("customer");
@@ -278,20 +279,22 @@ function EnhancedTable(tableName, modelBase, rows) {
 
   const [itemId, setitemId] = React.useState();
 
-  function handleClickOpen(itemId){
+  function handleClickOpen(itemId) {
     setOpen(true);
     setitemId(itemId);
-  };
+  }
 
-  function handleClose(){
+  function handleClose() {
     return setOpen(false);
-  };
-
+  }
 
   return (
     <div>
       <Paper>
-        <EnhancedTableToolbar numSelected={selected.length} tableName = {tableName} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          tableName={tableName}
+        />
         <TableContainer>
           <Table
             aria-labelledby="tableTitle"
@@ -331,13 +334,17 @@ function EnhancedTable(tableName, modelBase, rows) {
                         />
                       </TableCell>
 
-                        {rows.map((oneRow)=>{
-                            oneRow = oneRow.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                            if(oneRow == 'cnpj'){
-                              row[oneRow] = cnpjMask(row[oneRow])
-                            }
-                            return(<TableCell align="left">{row[oneRow]}</TableCell> )
-                        })}
+                      {rows.map((oneRow) => {
+                        oneRow = oneRow
+                          .normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "");
+                        if (oneRow == "cnpj") {
+                          row[oneRow] = cnpjMask(row[oneRow]);
+                        }
+                        return (
+                          <TableCell align="left">{row[oneRow]}</TableCell>
+                        );
+                      })}
 
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
@@ -345,19 +352,33 @@ function EnhancedTable(tableName, modelBase, rows) {
                             {/* <Link href={{ pathname: '/forms/productForm/[rowId]', query: { rowId: {...row} },}}> */}
                             <Link>
                               {/* <IconButton aria-label="edit" size="large" onClick={() => DataForm({...row})}> */}
-                              <IconButton aria-label="edit" size="large" onClick={() => UpdateData(urlBase, row.id, newData)}>
-                              <EditIcon />
+                              <IconButton
+                                aria-label="edit"
+                                size="large"
+                                onClick={() =>
+                                  UpdateData(urlBase, row.id, newData)
+                                }
+                              >
+                                <EditIcon />
                               </IconButton>
                             </Link>
                           </NextLink>
-                        
-                          <NextLink href="/invoices/detail" passHref> 
-                            <Link><IconButton aria-label="details" size="large">
-                              <RemoveRedEyeIcon />
-                            </IconButton></Link>
+
+                          <NextLink href="/invoices/detail" passHref>
+                            <Link>
+                              <IconButton aria-label="details" size="large">
+                                <RemoveRedEyeIcon />
+                              </IconButton>
+                            </Link>
                           </NextLink>
 
-                          <IconButton aria-label="delete" size="large" onClick={()=>{handleClickOpen(row.id);}}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            onClick={() => {
+                              handleClickOpen(row.id);
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
 
@@ -380,13 +401,21 @@ function EnhancedTable(tableName, modelBase, rows) {
                                 Não
                               </Button>
                               <div>
-                                <Button onClick={ () => {notifyReturn(itemId); handleClose(); DeleteData(urlBase, itemId); refreshComponent()} } color="primary" autoFocus>
+                                <Button
+                                  onClick={() => {
+                                    notifyReturn(itemId);
+                                    handleClose();
+                                    DeleteData(urlBase, itemId);
+                                    refreshComponent();
+                                  }}
+                                  color="primary"
+                                  autoFocus
+                                >
                                   Sim
                                 </Button>
                               </div>
                             </DialogActions>
                           </Dialog>
-
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -415,13 +444,13 @@ function EnhancedTable(tableName, modelBase, rows) {
 }
 
 // props: Nome da Tabela, link final da tabela, colunas da tabela
-const BaseTable = ({tableName, modelBase, rows}) => {
+const BaseTable = ({ tableName, modelBase, rows }) => {
   return (
     <>
-        {EnhancedTable(tableName, modelBase, rows)}
-        <ToastContainer /> 
+      {EnhancedTable(tableName, modelBase, rows)}
+      <ToastContainer />
     </>
   );
-}
+};
 
 export default BaseTable;

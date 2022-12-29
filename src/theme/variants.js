@@ -67,8 +67,6 @@ const defaultVariant = {
   },
 };
 
-const variants = [
-  defaultVariant,
-];
+const variants = [defaultVariant];
 
 export default variants;
