@@ -349,6 +349,7 @@ function EnhancedTable(tableName, modelBase, rows) {
                         );
                       })}
 
+
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
                           <NextLink href="/forms/productForm/" passHref>
