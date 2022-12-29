@@ -136,6 +136,7 @@ const EnhancedTableHead = (props) => {
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
+            key={1}
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
@@ -342,7 +343,9 @@ function EnhancedTable(tableName, modelBase, rows) {
                           row[oneRow] = cnpjMask(row[oneRow]);
                         }
                         return (
-                          <TableCell align="left">{row[oneRow]}</TableCell>
+                          <TableCell key={1} align="left">
+                            {row[oneRow]}
+                          </TableCell>
                         );
                       })}
 
